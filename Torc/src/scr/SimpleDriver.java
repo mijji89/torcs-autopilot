@@ -8,8 +8,8 @@ import javax.swing.SwingUtilities;
 
 public class SimpleDriver extends Controller {
 	//Flag booleana che mi permette di leggere o meno i valori di tastiera
-	private boolean training = true; 
-	private SensorModel sensor;  
+	private boolean training = true;   
+	private char pressed;  
 	
 	/* Costanti di cambio marcia */
 	final int[] gearUp = { 5000, 6000, 6000, 6500, 7000, 0 };
@@ -66,41 +66,8 @@ public class SimpleDriver extends Controller {
 	}
 
 	public  void setPressed(char ch){
-		if(training){
-			VectorFeatures vf= null; 
-			switch (ch) {
-				case 'w': 
-					vf = new VectorFeatures(this.sensor, 0); 
-					break;
-				case 'a': 
-					vf = new VectorFeatures(this.sensor,1 ); 
-					break;
-				case 'd': 
-					vf = new VectorFeatures(this.sensor,2 ); 
-					break;
-				case 's': 
-					vf = new VectorFeatures(this.sensor,3 ); 
-					break;
-				case 'r': 
-					vf = new VectorFeatures(this.sensor,4 ); 
-					break;
-				case 'q': 
-					vf = new VectorFeatures(this.sensor,5 ); 
-					break;
-				case 'e': 
-					vf = new VectorFeatures(this.sensor,6 ); 
-				default:
-					vf = new VectorFeatures(this.sensor,-1 );
-					break; 	
-			}
-			try(BufferedWriter bw= new BufferedWriter(new FileWriter("dataset.csv"))){
-				bw.append(vf.toString());
-				bw.append("\n");
-			}catch(IOException ex){
-				System.err.println();
-			}
-			
-		}
+		this.pressed=ch; 
+		
 	}
 
 	public void reset() {
@@ -198,7 +165,6 @@ public class SimpleDriver extends Controller {
 	}
 
 	public Action control(SensorModel sensors) {
-		this.sensor=sensors; 
 		// Controlla se l'auto è attualmente bloccata
 		/**
 			Se l'auto ha un angolo, rispetto alla traccia, superiore a 30°
@@ -207,6 +173,7 @@ public class SimpleDriver extends Controller {
 			Quando l'angolo si riduce, "stuck" viene riportata a 0 per indicare che l'auto è
 			uscita dalla situaizone di difficoltà
 		 **/
+
 		if (!training){
 			if (Math.abs(sensors.getAngleToTrackAxis()) > stuckAngle) {
 				// update stuck counter
@@ -287,8 +254,42 @@ public class SimpleDriver extends Controller {
 				action.clutch = clutch;
 				return action;
 			}
+		}else{
+			VectorFeatures vf= null; 
+			switch (this.pressed) {
+				case 'w': 
+					vf = new VectorFeatures(sensors, 0); 
+					break;
+				case 'a': 
+					vf = new VectorFeatures(sensors,1 ); 
+					break;
+				case 'd': 
+					vf = new VectorFeatures(sensors,2 ); 
+					break;
+				case 's': 
+					vf = new VectorFeatures(sensors,3 ); 
+					break;
+				case 'r': 
+					vf = new VectorFeatures(sensors,4 ); 
+					break;
+				case 'q': 
+					vf = new VectorFeatures(sensors,5 ); 
+					break;
+				case 'e': 
+					vf = new VectorFeatures(sensors,6 ); 
+				default:
+					vf = new VectorFeatures(sensors,-1 );
+					break; 	
+			}
+			try(BufferedWriter bw= new BufferedWriter(new FileWriter("dataset.csv"))){
+				bw.append(vf.toString());
+				bw.append("\n");
+			}catch(IOException ex){
+				System.err.println();
+			}
+			
 		}
-		return null;
+		return null; //DA SOSTITUIRE
 	}
 
 	private float filterABS(SensorModel sensors, float brake) {
