@@ -4,11 +4,14 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import scr.SensorModel;
 
 public class ContinuousCharReaderUI extends JFrame {
     private JTextField inputField;
+    private final SimpleDriver sd; 
 
-    public ContinuousCharReaderUI() {
+    public ContinuousCharReaderUI(SimpleDriver sd) {
+        this.sd=sd; 
         // Set up the frame
         setTitle("Continuous Character Reader");
         setSize(300, 100);
@@ -25,10 +28,9 @@ public class ContinuousCharReaderUI extends JFrame {
             public void keyTyped(KeyEvent e) {
                 char ch = e.getKeyChar();
                 System.out.println("You pressed: " + ch);
-
                 // Clear the text field
                 inputField.setText("");
-
+                sd.setPressed(ch);
                 // Exit if 'q' is pressed
                 if (ch == 'q') {
                     System.exit(0);
@@ -38,11 +40,6 @@ public class ContinuousCharReaderUI extends JFrame {
 
         // Make the frame visible
         setVisible(true);
-    }
-
-    public static void main(String[] args) {
-        // Run the UI in the Event Dispatch Thread (EDT)
-        SwingUtilities.invokeLater(() -> new ContinuousCharReaderUI());
     }
 }
 
