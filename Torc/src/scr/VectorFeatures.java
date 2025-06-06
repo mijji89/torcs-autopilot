@@ -1,7 +1,5 @@
 package scr;
 
-import java.util.ArrayList;
-
 public class VectorFeatures {
     private double[] features; 
     private int actionKey; 
@@ -27,6 +25,10 @@ public class VectorFeatures {
         this.actionKey=action; 
 
        
+    }
+
+    public int getActionKey(){
+        return this.actionKey;
     }
 
      @Override
