@@ -31,7 +31,7 @@ public class ContinuousCharReaderUI extends JFrame {
                 inputField.setText("");
                 sd.setPressed(ch);
                 // Exit if 'q' is pressed
-                if (ch == 'q') {
+                if (ch == 'z') {
                     System.exit(0);
                 }
             }
