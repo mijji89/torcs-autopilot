@@ -165,6 +165,7 @@ public class SimpleDriver extends Controller {
 	}
 
 	public Action control(SensorModel sensors) {
+		Action azione=new Action();
 		// Controlla se l'auto è attualmente bloccata
 		/**
 			Se l'auto ha un angolo, rispetto alla traccia, superiore a 30°
@@ -254,31 +255,43 @@ public class SimpleDriver extends Controller {
 				action.clutch = clutch;
 				return action;
 			}
-		}else{
+		}
+		else{
 			VectorFeatures vf= null; 
 			switch (this.pressed) {
 				case 'w': 
-					vf = new VectorFeatures(sensors, 0); 
+					vf = new VectorFeatures(sensors, 0);
+					azione.accelerate=1.0;
+					azione.gear=getGear(sensors);
 					break;
 				case 'a': 
-					vf = new VectorFeatures(sensors,1 ); 
+					vf = new VectorFeatures(sensors,1 );
+					azione.gear=getGear(sensors);
+					azione.steering=-1;
 					break;
 				case 'd': 
-					vf = new VectorFeatures(sensors,2 ); 
+					vf = new VectorFeatures(sensors,2 );
+					azione.gear=getGear(sensors); 
+					azione.steering=1;
 					break;
 				case 's': 
 					vf = new VectorFeatures(sensors,3 ); 
+					azione.gear=getGear(sensors);
+					azione.brake=1;
+					azione.accelerate=0;
 					break;
 				case 'r': 
 					vf = new VectorFeatures(sensors,4 ); 
+					azione.gear=-1;
 					break;
 				case 'q': 
 					vf = new VectorFeatures(sensors,5 ); 
 					break;
 				case 'e': 
-					vf = new VectorFeatures(sensors,6 ); 
+					vf = new VectorFeatures(sensors,6); 
+					break;
 				default:
-					vf = new VectorFeatures(sensors,-1 );
+					vf = new VectorFeatures(sensors,-1);
 					break; 	
 			}
 			try(BufferedWriter bw= new BufferedWriter(new FileWriter("dataset.csv"))){
@@ -289,7 +302,7 @@ public class SimpleDriver extends Controller {
 			}
 			
 		}
-		return null; //DA SOSTITUIRE
+		return azione; //DA SOSTITUIRE
 	}
 
 	private float filterABS(SensorModel sensors, float brake) {

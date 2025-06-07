@@ -1,14 +1,14 @@
-package scr;
+	package scr;
 
-import java.util.Hashtable;
-import java.util.Enumeration;
-import java.util.StringTokenizer;
+	import java.util.Hashtable;
+	import java.util.Enumeration;
+	import java.util.StringTokenizer;
 
-/**
- * Created by IntelliJ IDEA. User: Administrator Date: Feb 22, 2008 Time:
- * 6:17:32 PM
- */
-public class MessageParser {
+	/**
+	 * Created by IntelliJ IDEA. User: Administrator Date: Feb 22, 2008 Time:
+	 * 6:17:32 PM
+	 */
+	public class MessageParser {
 	/**
 	 * Analizza il messaggio dal serverbot e crea una tabella di nomi e valori associati delle letture
 	 */
@@ -57,11 +57,11 @@ public class MessageParser {
 				} else {
 					String token = rt.nextToken();
 					try {
-						readingValue = new Double(token);
+						readingValue = Double.valueOf(token);
 					} catch (Exception e) {
 						System.out.println("Error parsing value '" + token + "' for " + readingName + " using 0.0");
 						System.out.println("Message: " + message);
-						readingValue = new Double(0.0);
+						readingValue = 0.0;
 					}
 				}
 				table.put(readingName, readingValue);
@@ -85,4 +85,4 @@ public class MessageParser {
 	public String getMessage() {
 		return message;
 	}
-}
+	}
