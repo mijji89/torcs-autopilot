@@ -1,10 +1,9 @@
 package scr;
 
-import javax.swing.*;
 import java.awt.*;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
-import scr.SensorModel;
+import javax.swing.*;
 
 public class ContinuousCharReaderUI extends JFrame {
     private JTextField inputField;
@@ -36,6 +35,13 @@ public class ContinuousCharReaderUI extends JFrame {
                     System.exit(0);
                 }
             }
+
+            @Override
+            public void keyReleased(KeyEvent e) {
+                sd.setPressed(' ');
+                System.out.println("Tasto rilasciato - reset");
+            }
+
         });
 
         // Make the frame visible
