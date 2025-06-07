@@ -287,9 +287,19 @@ public class SimpleDriver extends Controller {
 			}catch(IOException ex){
 				System.err.println();
 			}
-			
+			Action act= ManualControl(vf,sensors, clutch);
+			return act;
 		}
-		return null; //DA SOSTITUIRE
+	}
+
+	public 	Action ManualControl(VectorFeatures vf, SensorModel sensor, float currclutch){
+		//Costruisco l'azione 
+		//Frizione e marcia continuo a gestire in automatico
+		//In base alla classe dovrò generare comandi diversi per accelerazione, freno e sterzata
+		int gear= getGear(sensor); 
+		float clutch= clutching(sensor, currclutch);
+		//Costruisco l'azione e la ritorno 
+		return null;
 	}
 
 	private float filterABS(SensorModel sensors, float brake) {
