@@ -51,7 +51,7 @@ public class SimpleDriver extends Controller {
 
 	// current clutch
 	private float clutch = 0;
-	File file = new File("dataset.csv");
+	File file = new File("datasetReb.csv");
 
 	public SimpleDriver(){
 		if (training & !file.exists()){
@@ -66,6 +66,7 @@ public class SimpleDriver extends Controller {
 		}else if (training & file.exists()){
             try {
                 this.bw = new BufferedWriter(new FileWriter(file,true));
+				this.bw.append("\n");
 				this.bw.append("AngleToTrackAxis;CurrentLapTime;Damage;DistanceFromStartLine;DistanceRaced;Speed;ZSpeed;Z;TrackEdgeSensors0;TrackEdgeSensor-90;TrackEdgeSensor+90;TarckEdgeSensor-50;TrackEdgeSensor+30;TrackPosition;action");
 				this.bw.append("\n");
 			} catch (IOException ex) {
@@ -183,6 +184,7 @@ public class SimpleDriver extends Controller {
 	}
 
 	public Action control(SensorModel sensors) {
+		Action azione=new Action();
 		// Controlla se l'auto è attualmente bloccata
 		/**
 			Se l'auto ha un angolo, rispetto alla traccia, superiore a 30°
@@ -272,7 +274,8 @@ public class SimpleDriver extends Controller {
 				action.clutch = clutch;
 				return action;
 			}
-		}else{
+		}
+		else{
 			VectorFeatures vf= null; 
 			switch (this.pressed) {
 				case 'w': 
@@ -290,10 +293,14 @@ public class SimpleDriver extends Controller {
 				case 's': 
 					//frena
 					vf = new VectorFeatures(sensors,3 ); 
+					azione.gear=getGear(sensors);
+					azione.brake=1;
+					azione.accelerate=0;
 					break;
 				case 'r': 
 					//retromarcia
 					vf = new VectorFeatures(sensors,4 ); 
+					azione.gear=-1;
 					break;
 				case 'q': 
 					//sinistra avanti

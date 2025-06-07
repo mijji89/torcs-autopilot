@@ -1,14 +1,14 @@
-package scr;
+	package scr;
 
-import java.util.Hashtable;
-import java.util.Enumeration;
-import java.util.StringTokenizer;
+	import java.util.Hashtable;
+	import java.util.Enumeration;
+	import java.util.StringTokenizer;
 
-/**
- * Created by IntelliJ IDEA. User: Administrator Date: Feb 22, 2008 Time:
- * 6:17:32 PM
- */
-public class MessageParser {
+	/**
+	 * Created by IntelliJ IDEA. User: Administrator Date: Feb 22, 2008 Time:
+	 * 6:17:32 PM
+	 */
+	public class MessageParser {
 	/**
 	 * Analizza il messaggio dal serverbot e crea una tabella di nomi e valori associati delle letture
 	 */
@@ -85,4 +85,4 @@ public class MessageParser {
 	public String getMessage() {
 		return message;
 	}
-}
+	}

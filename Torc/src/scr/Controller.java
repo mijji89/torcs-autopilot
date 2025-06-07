@@ -1,7 +1,6 @@
 package scr;
 
 public abstract class Controller {
-
 	public enum Stage {
 
 		WARMUP, QUALIFYING, RACE, UNKNOWN;
