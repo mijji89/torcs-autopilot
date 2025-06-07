@@ -1,9 +1,9 @@
 package scr;
 
 import java.io.BufferedWriter;
+import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-
 import javax.swing.SwingUtilities;
 
 public class SimpleDriver extends Controller {
@@ -46,21 +46,31 @@ public class SimpleDriver extends Controller {
 	final float clutchMaxModifier = (float) 1.3;
 	final float clutchMaxTime = (float) 1.5;
 
-
-
+	BufferedWriter bw; 
 	private int stuck = 0;
 
 	// current clutch
 	private float clutch = 0;
+	File file = new File("datasetReb.csv");
 
 	public SimpleDriver(){
-		if (training){
-			try(BufferedWriter bw= new BufferedWriter(new FileWriter("dataset.csv"))){
-				bw.write("AngleToTrackAxis;CurrentLapTime;Damage;DistanceFromStartLine;DistanceRaced;Speed;ZSpeed;Z;TrackEdgeSensors0;TrackEdgeSensor-90;TrackEdgeSensor+90;TarckEdgeSensor-50;TrackEdgeSensor+30;TrackPosition;action");
-				bw.write("\n");
+		if (training & !file.exists()){
+			try{
+				this.bw = new BufferedWriter(new FileWriter(file));
+				this.bw.write("AngleToTrackAxis;CurrentLapTime;Damage;DistanceFromStartLine;DistanceRaced;Speed;ZSpeed;Z;TrackEdgeSensors0;TrackEdgeSensor-90;TrackEdgeSensor+90;TarckEdgeSensor-50;TrackEdgeSensor+30;TrackPosition;action");
+				this.bw.write("\n");
 			}catch(IOException ex){
 				System.err.println();
 			}
+			SwingUtilities.invokeLater(() -> new ContinuousCharReaderUI(this));
+		}else if (training & file.exists()){
+            try {
+                this.bw = new BufferedWriter(new FileWriter(file,true));
+				this.bw.append("\n");
+				this.bw.append("AngleToTrackAxis;CurrentLapTime;Damage;DistanceFromStartLine;DistanceRaced;Speed;ZSpeed;Z;TrackEdgeSensors0;TrackEdgeSensor-90;TrackEdgeSensor+90;TarckEdgeSensor-50;TrackEdgeSensor+30;TrackPosition;action");
+				this.bw.append("\n");
+			} catch (IOException ex) {
+            }
 			SwingUtilities.invokeLater(() -> new ContinuousCharReaderUI(this));
 		}
 	}
@@ -71,12 +81,21 @@ public class SimpleDriver extends Controller {
 	}
 
 	public void reset() {
+        try {
+            this.bw.append("\n");
+        } catch (IOException ex) {
+        }
 		System.out.println("Restarting the race!");
 
 	}
 
 	public void shutdown() {
+        try {
+            this.bw.append("\n");
+        } catch (IOException ex) {
+        }
 		System.out.println("Bye bye!");
+	
 	}
 
 	private int getGear(SensorModel sensors) {
@@ -260,43 +279,44 @@ public class SimpleDriver extends Controller {
 			VectorFeatures vf= null; 
 			switch (this.pressed) {
 				case 'w': 
-					vf = new VectorFeatures(sensors, 0);
-					azione.accelerate=1.0;
-					azione.gear=getGear(sensors);
+					//accelera
+					vf = new VectorFeatures(sensors, 0); 
 					break;
 				case 'a': 
-					vf = new VectorFeatures(sensors,1 );
-					azione.gear=getGear(sensors);
-					azione.steering=-1;
+					//sinistra
+					vf = new VectorFeatures(sensors,1 ); 
 					break;
 				case 'd': 
-					vf = new VectorFeatures(sensors,2 );
-					azione.gear=getGear(sensors); 
-					azione.steering=1;
+					//destra
+					vf = new VectorFeatures(sensors,2 ); 
 					break;
 				case 's': 
+					//frena
 					vf = new VectorFeatures(sensors,3 ); 
 					azione.gear=getGear(sensors);
 					azione.brake=1;
 					azione.accelerate=0;
 					break;
 				case 'r': 
+					//retromarcia
 					vf = new VectorFeatures(sensors,4 ); 
 					azione.gear=-1;
 					break;
 				case 'q': 
+					//sinistra avanti
 					vf = new VectorFeatures(sensors,5 ); 
 					break;
 				case 'e': 
-					vf = new VectorFeatures(sensors,6); 
+					//destra avanti
+					vf = new VectorFeatures(sensors,6 ); 
 					break;
 				default:
-					vf = new VectorFeatures(sensors,-1);
+					vf = new VectorFeatures(sensors, -1);
 					break; 	
 			}
-			try(BufferedWriter bw= new BufferedWriter(new FileWriter("dataset.csv"))){
-				bw.append(vf.toString());
-				bw.append("\n");
+			try{
+				this.bw.append(vf.toString());
+				this.bw.append("\n");
 			}catch(IOException ex){
 				System.err.println();
 			}
@@ -305,14 +325,73 @@ public class SimpleDriver extends Controller {
 		}
 	}
 
+	/* Controller per la guida manuale con controlli wasdqer */
 	public 	Action ManualControl(VectorFeatures vf, SensorModel sensor, float currclutch){
 		//Costruisco l'azione 
 		//Frizione e marcia continuo a gestire in automatico
 		//In base alla classe dovrò generare comandi diversi per accelerazione, freno e sterzata
 		int gear= getGear(sensor); 
 		float clutch= clutching(sensor, currclutch);
+		int actionClass = vf.getActionKey();
+		
+		//Cosrtuisco l'azione da ritornare
+		Action azione = new Action();
+		azione.gear = gear;
+		azione.clutch = clutch;
+
+		switch(actionClass){
+			case 0:
+				//accelera
+				azione.accelerate = 1.0;
+				azione.brake = 0.0;
+				azione.steering = 0.0;
+				break;
+			case 1:
+				//sinistra
+				azione.accelerate = 0.7;
+				azione.brake = 0.0;
+				azione.steering = 1;
+				break;
+			case 2:
+				//destra
+				azione.accelerate = 0.7;
+				azione.brake = 0.0;
+				azione.steering = -1;
+				break;
+			case 3:
+				//frena
+				azione.accelerate = 0.0;
+				azione.brake = 1.0;
+				azione.steering = 0;
+				break;
+			case 4:
+				//retromarcia
+				azione.gear = -1;
+				azione.accelerate = 1.0; 
+				azione.brake = 0.0;
+				azione.steering = 0;
+				break;
+			case 5:
+				//avanti sinistra
+				azione.accelerate = 1.0; 
+				azione.brake = 0.0;
+				azione.steering = 0.6;
+				break;
+			case 6:
+				//avanti destra
+				azione.accelerate = 1.0; 
+				azione.brake = 0.0;
+				azione.steering = -0.6;
+				break;
+			case -1:
+				//default
+				azione.accelerate = 0.0;
+				azione.brake = 0.0;
+				azione.steering = 0;
+				break;
+		}
 		//Costruisco l'azione e la ritorno 
-		return null;
+		return azione;
 	}
 
 	private float filterABS(SensorModel sensors, float brake) {

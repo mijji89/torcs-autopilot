@@ -61,7 +61,7 @@
 					} catch (Exception e) {
 						System.out.println("Error parsing value '" + token + "' for " + readingName + " using 0.0");
 						System.out.println("Message: " + message);
-						readingValue = 0.0;
+						readingValue = (0.0);
 					}
 				}
 				table.put(readingName, readingValue);
