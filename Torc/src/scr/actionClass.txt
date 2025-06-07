@@ -1,0 +1,6 @@
+0 -> accelera w
+1 -> giraSX a
+2 -> giraDX d
+3 -> frena s
+4 -> retromarcia r
+
