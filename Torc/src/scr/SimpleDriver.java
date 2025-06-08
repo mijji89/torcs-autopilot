@@ -12,9 +12,7 @@ public class SimpleDriver extends Controller {
 	private boolean training = true;   
 	private char pressed;  
 
-	/*Definizione dei vettori minimi e massimi (utili per la normalizzazione) */
-	final Double[] min={-(Math.PI),0.0,0.0,0.19,0.0,-992.625,-999.936,840.515,0.236136,0.0,0.0,0.0,0.0,0.0};
-	final Double[] max={+(Math.PI),280.206,712.0,5784.10,5737.42,999.766,0.414195,200.0,200.0,200.0,200.0,200.0 };
+	
 	
 	/* Costanti di cambio marcia */
 	final int[] gearUp = { 5000, 6000, 6000, 6500, 7000, 0 };

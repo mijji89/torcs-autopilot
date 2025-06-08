@@ -25,9 +25,24 @@ public class VectorFeatures {
         this.features[13]=sensors.getTrackPosition(); 
         this.actionKey= action;        
     }
-
+    
     public int getActionKey(){
         return this.actionKey;
+    }
+
+    public void setFeatures(Double angleAxis, Double speed, Double angleZero, Double angleMinNinenty , Double angleMaxNinety, Double angleMinFifty, Double angleMaxThirty, Double trackPos ){
+        this.features[0]=angleAxis; 
+        this.features[5]=speed; 
+        this.features[8]=angleZero; 
+        this.features[9]=angleMinNinenty; 
+        this.features[10]=angleMaxNinety;
+        this.features[11]=angleMinFifty;
+        this.features[12]=angleMaxThirty;
+        this.features[13]=trackPos; 
+    }
+
+    public Double[] getFeatures(){
+        return this.features;
     }
 
     @Override
@@ -57,8 +72,8 @@ public class VectorFeatures {
 			sum += Math.pow(this.features[i] - other.features[i], 2);
 		}
             return Math.sqrt(sum);
-    }    
-
+    }  
+    
     //La funzione normalizza i valori del veactor features sfruttando due vettori: uno contenente i minimi per ogni feature e uno contenente i massimi per ogni feature
     //Minimi e massimi devono far riferimento ai minimi e massimi generici, non a quelli del training set
     public Double[] normalizeMinMax(Double[] min, Double[] max){
@@ -66,6 +81,7 @@ public class VectorFeatures {
         for(int i=0; i< features.length; i++ ){
             normalized[i]= (features[i]-min[i])/(max[i]-min[i]);
         }
-        return normalized; 
+        return normalized;
     }
+
 }
