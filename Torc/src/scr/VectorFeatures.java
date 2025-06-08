@@ -39,7 +39,6 @@ public class VectorFeatures {
 	public VectorFeatures(String lineCSV){
 		String[] parts = lineCSV.split(";");
 		int n = parts.length;
-
 		this.features = new Double[14];
 		for(int i=0; i<n-1; i++){
 			this.features[i] = Double.parseDouble(parts[i].trim());
@@ -53,7 +52,6 @@ public class VectorFeatures {
 		//dobbiamo calcolare la distanza di tutte le features per classificare il campione -> 
         //sommiamo tutte le differenza this - other, eleva la differenza al quadrato, 
         //e restituisce la radice della somma
-
 		Double sum = 0.0;
 		for(int i = 0; i<this.features.length; i++){
 			sum += Math.pow(this.features[i] - other.features[i], 2);
