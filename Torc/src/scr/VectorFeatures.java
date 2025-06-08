@@ -37,8 +37,8 @@ public class VectorFeatures {
 	
 	/*Costruttore per la gestione della lettura dei dati del trainingSet*/
 	public VectorFeatures(String lineCSV){
-		String[] parts = line.split(";");
-		int n = parts.length();
+		String[] parts = lineCSV.split(";");
+		int n = parts.length;
 		this.features = new Double[14];
 		for(int i=0; i<n-1; i++){
 			this.features[i] = Double.parseDouble(parts[i].trim());
@@ -53,7 +53,7 @@ public class VectorFeatures {
         //sommiamo tutte le differenza this - other, eleva la differenza al quadrato, 
         //e restituisce la radice della somma
 
-		Double sum = 0;
+		Double sum = 0.0;
 		for(int i = 0; i<this.features.length; i++){
 			sum += Math.pow(this.features[i] - other.features[i], 2);
 		}
