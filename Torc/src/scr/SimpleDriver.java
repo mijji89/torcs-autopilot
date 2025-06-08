@@ -5,11 +5,16 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import javax.swing.SwingUtilities;
+import java.lang.Math;
 
 public class SimpleDriver extends Controller {
 	//Flag booleana che mi permette di leggere o meno i valori di tastiera
 	private boolean training = true;   
 	private char pressed;  
+
+	/*Definizione dei vettori minimi e massimi (utili per la normalizzazione) */
+	final Double[] min={-(Math.PI),0.0,0.0,0.19,0.0,-992.625,-999.936,840.515,0.236136,0.0,0.0,0.0,0.0,0.0};
+	final Double[] max={+(Math.PI),280.206,712.0,5784.10,5737.42,999.766,0.414195,200.0,200.0,200.0,200.0,200.0 };
 	
 	/* Costanti di cambio marcia */
 	final int[] gearUp = { 5000, 6000, 6000, 6500, 7000, 0 };
@@ -51,7 +56,7 @@ public class SimpleDriver extends Controller {
 
 	// current clutch
 	private float clutch = 0;
-	File file = new File("datasetReb.csv");
+	File file = new File("dataset.csv");
 
 	public SimpleDriver(){
 		if (training & !file.exists()){
