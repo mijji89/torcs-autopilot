@@ -62,17 +62,7 @@ public class VectorFeatures {
 		this.actionKey = Integer.parseInt(parts[n-1].trim());
 	}
 
-	/*The method compute the distance between this point and the one passed as parameters*/
-    public Double distance(VectorFeatures other) {
-		//dobbiamo calcolare la distanza di tutte le features per classificare il campione -> 
-        //sommiamo tutte le differenza this - other, eleva la differenza al quadrato, 
-        //e restituisce la radice della somma
-		Double sum = 0.0;
-		for(int i = 0; i<this.features.length; i++){
-			sum += Math.pow(this.features[i] - other.features[i], 2);
-		}
-            return Math.sqrt(sum);
-    }  
+	  
     
     //La funzione normalizza i valori del veactor features sfruttando due vettori: uno contenente i minimi per ogni feature e uno contenente i massimi per ogni feature
     //Minimi e massimi devono far riferimento ai minimi e massimi generici, non a quelli del training set

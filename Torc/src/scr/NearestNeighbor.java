@@ -8,64 +8,54 @@ import java.util.List;
 
 public class NearestNeighbor {
     
-    private List<Double[]> trainingData;
-    
+    private List<Point> trainingData;
+    private String flof = "AngleToTrackAxis;Speed;TrackEdgeSensors0;TrackEdgeSensor-90;TrackEdgeSensor+90;TarckEdgeSensor-50;TrackEdgeSensor+30;TrackPosition;action";
+
     public NearestNeighbor() {
         this.trainingData = new ArrayList<>();
+        this.readPointsFromCSV("normalizedDataset.csv");
     }
-    /*
-    Reading the training set from a file with the name "filename".
-    The file needs to be in the form
-    x,y,class -> this is the first line of the file
-    250,50,2
-    250,150,1
-    etc (where the specific numbers correspond to the specific feature)
-    */
+
     public void readPointsFromCSV(String filename) {
         try {
-            BufferedReader reader = new BufferedReader(new FileReader(filename));
+            BufferedReader bw = new BufferedReader(new FileReader(filename));
             String line;
-            while ((line = reader.readLine()) != null) {
-                if (line.startsWith("x,y,class")) {
+            while ((line = bw.readLine()) != null) {
+                if (line.startsWith(flof)) {
                     continue; // Skip header
                 }
-                String[] parts = line.split(",");
-                double x = Double.parseDouble(parts[0].trim());
-                double y = Double.parseDouble(parts[1].trim());
-                int cls = Integer.parseInt(parts[2].trim());
-                trainingData.add(new Sample(x, y, cls));
+
+                trainingData.add(new Point(line));
                 System.out.println("Sto leggendo i punti.");
             }
-            reader.close();
-        } catch (IOException e) {
-            e.printStackTrace();
+            bw.close();
+        } catch (IOException ex) {
+            System.err.println(ex);
         }
     }
     
-public Sample findNearestNeighbor(Sample testPoint) {
-    if (trainingData.isEmpty()) {
-         System.out.println("training set vuoto");
-       
-        return new Sample(0, 0, 0); // Nessun dato di allenamento disponibile, restituisci un punto vuoto
-    }
-    
-    Sample nearestNeighbor = trainingData.get(0); // Imposta il primo punto come punto più vicino iniziale
-    double minDistance = testPoint.distance(nearestNeighbor); // Calcola la distanza dal primo punto
-    
-    // Cerca il punto più vicino
-    for (Sample point : trainingData) {
-        double distance = testPoint.distance(point);
-        System.out.println("Distance to point (" + point.x + ", " + point.y + "): " + distance);
-        if (distance < minDistance) {
-            minDistance = distance;
-            nearestNeighbor = point;
+    public Point findNearestNeighbor(Point testPoint) {
+        if (trainingData.isEmpty()) {
+            System.out.println("training set vuoto");
+            return new Point(" "); // Nessun dato di allenamento disponibile, restituisci un punto vuoto
         }
+        
+        Point nearestNeighbor = trainingData.get(0); // Imposta il primo punto come punto più vicino iniziale
+        double minDistance = testPoint.distance(nearestNeighbor); // Calcola la distanza dal primo punto
+        
+        // Cerca il punto più vicino
+        for (Point point : trainingData) {
+            double distance = testPoint.distance(point);
+            //System.out.println("Distance to point (" + point.x + ", " + point.y + "): " + distance);
+            if (distance < minDistance) {
+                minDistance = distance;
+                nearestNeighbor = point;
+            }
+        }
+        return nearestNeighbor; //opzione di tornare la classe per gestirla nel simpleDriver come fatto con i tasti
     }
     
-    return nearestNeighbor;
-}
-    
-    public List<Sample> getTrainingData() {
+    public List<Point> getTrainingData() {
         return trainingData;
     }
 }
