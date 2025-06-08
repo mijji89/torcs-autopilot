@@ -39,6 +39,7 @@ public class VectorFeatures {
 	public VectorFeatures(String lineCSV){
 		String[] parts = lineCSV.split(";");
 		int n = parts.length;
+
 		this.features = new Double[14];
 		for(int i=0; i<n-1; i++){
 			this.features[i] = Double.parseDouble(parts[i].trim());
@@ -59,4 +60,14 @@ public class VectorFeatures {
 		}
             return Math.sqrt(sum);
     }    
+
+    //La funzione normalizza i valori del veactor features sfruttando due vettori: uno contenente i minimi per ogni feature e uno contenente i massimi per ogni feature
+    //Minimi e massimi devono far riferimento ai minimi e massimi generici, non a quelli del training set
+    public Double[] normalizeMinMax(Double[] min, Double[] max){
+        Double[] normalized= new Double[14];
+        for(int i=0; i< features.length; i++ ){
+            normalized[i]= (features[i]-min[i])/(max[i]-min[i]);
+        }
+        return normalized; 
+    }
 }
