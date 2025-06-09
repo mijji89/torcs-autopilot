@@ -6,15 +6,18 @@ import java.io.FileWriter;
 import java.io.IOException;
 import javax.swing.SwingUtilities;
 
-/*La classe implementa la guida sia manuale che autonoma, gestisce in maniera automatica i freni e le marce.
- * - training: flag booleana che permette di leggere o meno i valori da tastiera
- * -pressed: mantiene il crattere corrispondente al tasto premuto (w-a-s-d-q-e-r)
- * -gearUp, gearDown: costanti di cambio marcia
- * - bw: BufferedWriter che consente di scrivere sul file CSV
- * - vfN: vettore di features che contiene le features normalizzate
- * -nn: istanza del classificatore NearestNeighbor utilizzata per predirre l'azione da effettuare
- * -clutch: frizione corrente (inizialmente a 0 - folle)
- * - file: file CSV in cui salvare i dati di training
+/**
+ * La classe implementa la guida sia manuale che autonoma, gestendo in maniera automatica i freni e le marce.
+ * 
+ * 
+ * - {@code training}: flag booleana che permette di abilitare o meno la modalità di training
+ * - {@code pressed}: mantiene il carattere corrispondente al tasto premuto (w-a-s-d-q-e-r)
+ * - {@code gearUp, gearDown}: array di soglie per il cambio marci automatico
+ * - {@code bw}: BufferedWriter che consente di scrivere sul file CSV
+ * - {@code vfN}: vettore delle features normalizzate
+ * - {@code nn}: classificatore NearestNeighbor utilizzata per predirre l'azione da effettuare
+ * - {@code clutch}:valore corrente della frizione (inizialmente a 0)
+ * - {@code file}: riferimento al file CSV per il salvataggio dei dati di training
  */
 public class SimpleDriver extends Controller {
 	private boolean training = true;   
@@ -22,7 +25,6 @@ public class SimpleDriver extends Controller {
 	
 	final int[] gearUp = { 5000, 6000, 6000, 6500, 7000, 0 };
 	final int[] gearDown = { 0, 2500, 3000, 3000, 3500, 3500 };
-
 
 	/* Costanti di accelerazione e di frenata */
 	final float maxSpeedDist = 70;
@@ -54,16 +56,16 @@ public class SimpleDriver extends Controller {
 	BufferedWriter bw; 
 	VectorFeatures vfN;
 	NearestNeighbor nn = new NearestNeighbor();
-
-	// current clutch
 	private float clutch = 0;
 
-	File file = new File("datasetBet.csv");
+	File file = new File("datasetMic.csv");
 
-	/*Costruttore che, se in modalità addestramento, permette di: 
+	/**
+	 * Costruttore che, se in modalità addestramento, permette di: 
+	 * 
 	 * - Inizializzare il BufferedWriter se il file su cui scrivere non esiste
 	 * - Continuare a scrivere sul file  se questo esiste
-	 * -Lanciare l'interfaccia grafica che permette la raccolta dei dati in ambo i casi
+	 * - Lanciare l'interfaccia grafica che permette la raccolta dei dati in ambo i casi
 	 */
 	public SimpleDriver(){
 		if (training & !file.exists()){
@@ -87,12 +89,19 @@ public class SimpleDriver extends Controller {
 		}
 	}
 
-	/*La funzione imposta la variabile pressed facendola corrispondere con il carattere associato al pulsante premuto */
+	/**
+	 * Imposta la variabile pressed facendola corrispondere con il carattere associato al pulsante premuto 
+	 * 
+	 * @param ch carattere corrispondente al pulsante premuto (w-a-s-d-q-e-r)
+	 */
 	public  void setPressed(char ch){
 		this.pressed=ch; 	
 	}
 
-	/*Funzione automaticamente chiamata quando la gara viene riavviata, scrive una newLine sul CSV di training */
+	/**
+	 * Scrive una nuova riga vuota sul CSV di training.
+	 * Viene chiamata automaticamente quando si riavvia una partita
+	 */
 	public void reset() {
         try {
             this.bw.append("\n");
@@ -102,7 +111,10 @@ public class SimpleDriver extends Controller {
 
 	}
 
-	/*Funzione automaticamente chiamata quando la gara viene terminata, permette di scrivere una newLine sul CSV di training */
+	/**
+	 * Scrive una nuova riga vuota sul CSV di training. 
+	 * Viene automaticamente chiamata quando la partita viene chiusa. 
+	 */
 	public void shutdown() {
         try {
             this.bw.append("\n");
@@ -112,7 +124,11 @@ public class SimpleDriver extends Controller {
 	
 	}
 
-	/*Funzione cgestisce la marcia in maniera automatica */
+	/**
+	 * Gestisce la marcia in maniera automatica 
+	 * 
+	 * @param sensors riferimento ai sensori di gioco
+	 */
 	private int getGear(SensorModel sensors) {
 		int gear = sensors.getGear();
 		double rpm = sensors.getRPM();
@@ -132,10 +148,14 @@ public class SimpleDriver extends Controller {
 			return gear;
 	}
 
-	/*Funzione che gestisce la creazione di un'azione in risposta alla lettura dei sensori. 
-	 * - Se in modalità di training (training è true) permette di gestire il comando tramite tastiera
-	 * - Se non in modalità di training (training è false) permette di predirre l'azione da effettuare richiamando 
-	 * l'algoritmo di NearestNeighbor
+	/**
+	 * Gestisce la creazione di un'azione in risposta alla lettura dei sensori.
+	 * 
+	 * - Se {@code training} è {@code true}, consente il controllo manuale tramite tastiera
+	 * - Se {@code training} è {@code false}, predice l'azione da eseguire usando NearestNeighbor
+	 * 
+	 * @param sensors riferimento ai sensori del gioco
+	 * @return azione da applicare
 	 */
 	public Action control(SensorModel sensors) {
 		if (!training){
@@ -191,7 +211,15 @@ public class SimpleDriver extends Controller {
 		}
 	}
 
-	/*La funzione associa a ciascuna classe passata (pClasse) l'azione da effettuare */
+	/**
+	 * Associa a ciascuna classe passata ({@code pClasse}) l'azione da effettuare 
+	 * 
+	 * @param pClasse classe dell'azione da effettuare
+	 * @param sensor riferimento ai sensori di gioco
+	 * @param currClutch valore della frizione corrente
+	 * 
+	 * @return l'azione da applicare
+	 */
 	public Action predictAction (int pClasse, SensorModel sensor, float currclutch){
 		int gear= getGear(sensor); 
 		float clutch= clutching(sensor, currclutch);
@@ -254,7 +282,16 @@ public class SimpleDriver extends Controller {
 		return act;
 	}
 
-	/* Controller per la guida manuale che sulla base delL'ActionKey contenuto nel vectorFeatures (vf), associa una risposta */
+	/**
+	 * Sulla base delL'ActionKey contenuto nel {@code vectorFeatures} (vf), associa una risposta 
+	 * La frizione e la marcia vengono comunque gestite automaticamente.
+	 * 
+	 * @param vf vettore delle features
+	 * @param sensor riferimento ai sensori di giocoà
+	 * @param currClutch valore attuale della frizione
+	 * 
+	 * @return azione da effettuare sulla base dell'ActionKey
+	 */
 	public 	Action ManualControl(VectorFeatures vf, SensorModel sensor, float currclutch){
 		//Frizione e freno continuano ad essere gestiti in automatico
 		int gear= getGear(sensor); 
@@ -317,7 +354,14 @@ public class SimpleDriver extends Controller {
 		return azione;
 	}
 
-	/*La funzione gestisce in maniera automatica la frizione  */
+	/**
+	 * Gestisce in maniera automatica la frizione
+	 * 
+	 * @param sensors riferimento ai sensori di gioco
+	 * @param clutch valore corrente della frizione
+	 * 
+	 * @return il valore della frizione da impostare 
+	 */
 	float clutching(SensorModel sensors, float clutch) {
 		float maxClutch = clutchMax;
 		// Controlla se la situazione attuale è l'inizio della gara
@@ -348,6 +392,11 @@ public class SimpleDriver extends Controller {
 		return clutch;
 	}
 
+	/**
+	 * Inizializza i 19 angoli dei sensori con valori tra -90 e +90 gradi.
+	 * 
+	 * @return array contente i valori degli angoli
+	 */
 	public float[] initAngles() {
 		float[] angles = new float[19];
 		/*

@@ -19,11 +19,11 @@ import java.io.IOException;
  * - una stringa contenente la riga di intestazione da saltare quando si leggono i training dataset "raw" 
  */
 public class NormalizeDataset {
-    private File[] trainingset = new File[4];
+    private File[] trainingset = new File[5];
     String flof="AngleToTrackAxis;CurrentLapTime;Damage;DistanceFromStartLine;DistanceRaced;Speed;ZSpeed;Z;TrackEdgeSensors0;TrackEdgeSensor-90;TrackEdgeSensor+90;TarckEdgeSensor-50;TrackEdgeSensor+30;TrackPosition;action";
     /*Definizione dei vettori minimi e massimi (utili per la normalizzazione) */
-	private final Double[] min={-(Math.PI),-0.982,0.0,0.173,0.0,-0.01,-14.181,0.228,-1.0,-1.0,-1.0,-1.0,-1.0,-1.10};
-	private final Double[] max={+(Math.PI),189.326,3.0,5784.10,11494.20,255.925,9.327,0.441,200.0,200.0,200.0,200.0,200.0,2.998};
+	private final Double[] min={-(Math.PI),-0.982,0.0,0.173,0.0,-32.01,-14.181,0.225,-1.0,-1.0,-1.0,-1.0,-1.0,-4.11};
+	private final Double[] max={+(Math.PI),194.186,1329.0,5784.10,11513.0,255.925,10.127,0.441,200.0,200.0,200.0,200.0,200.0,7.850};
     private File datasetNormalized= new File ("normalizedDataset.csv"); 
     private BufferedWriter bw; 
 
@@ -42,6 +42,7 @@ public class NormalizeDataset {
         this.trainingset[2]=f3; 
         this.trainingset[3]=f4;
         this.trainingset[4]=f5;
+        
         if(datasetNormalized.exists()){
             try {
                 this.bw = new BufferedWriter(new FileWriter(datasetNormalized,true));
@@ -62,7 +63,9 @@ public class NormalizeDataset {
         }
     }
 
-    /* La funzione permette di leggere i dati dal training set "raw", normalizzarli e scriverli su un nuovo file CSV  */
+    /**
+     * Legge i dati dal training set "raw", li normalizza tramite il MinMax scaling e li scrive su un nuovo file CSV di output
+     */
     public void readFromCSV(){
         for(int i=0; i<trainingset.length;i++ ){
             try{
@@ -88,7 +91,11 @@ public class NormalizeDataset {
         }
     }
 
-    /*La funzione scrive su un file CSV i dati di interesse dopo la normalizzaizone e la classe dell'azione effettuata */
+    /**
+     * Scrive su un file CSV i dati di interesse dopo la normalizzaizone e la classe dell'azione corrispondente
+     * 
+     * @param vf Oggetto VectorFeatures contenente i dati da scrivere
+     */
     public void writeCSV(VectorFeatures vf){
         try{
             this.bw.append(vf.getFeatures()[0]+";"+vf.getFeatures()[5]+";"+ vf.getFeatures()[8]+";"+ vf.getFeatures()[9]+";"+vf.getFeatures()[10]+";"+ vf.getFeatures()[11]+";"+vf.getFeatures()[12]+";"+vf.getFeatures()[13]+";"+vf.getActionKey());
@@ -98,9 +105,11 @@ public class NormalizeDataset {
         }
     }
 
-    /*Il main permette di generare il file "normalizzato" quando viene eseguito */
+    /**
+     * Metodo main che permette di generare il file "normalizzato" quando viene eseguito 
+     */
     public static void main(String[] args){
-        NormalizeDataset nd= new NormalizeDataset(new File("../classes/datasetBet.csv"), new File("../classes/datasetMic.csv"),new File("../classes/datasetReb.csv"), new File("../classes/datasetAndre.csv"));
+        NormalizeDataset nd= new NormalizeDataset(new File("C:\\Users\\Benedetta\\Desktop\\PROGETTO AI\\ProgettoIA\\Torc\\classes\\datasetBet.csv"), new File("C:\\Users\\Benedetta\\Desktop\\PROGETTO AI\\ProgettoIA\\Torc\\classes\\datasetMic.csv"),new File("C:\\Users\\Benedetta\\Desktop\\PROGETTO AI\\ProgettoIA\\Torc\\classes\\datasetReb.csv"), new File("C:\\Users\\Benedetta\\Desktop\\PROGETTO AI\\ProgettoIA\\Torc\\classes\\datasetAndre.csv"), new File("C:\\Users\\Benedetta\\Desktop\\PROGETTO AI\\ProgettoIA\\Torc\\classes\\datasetManovre.csv"));
         nd.readFromCSV();
         System.out.println("Dataset prodotto!");
     }
