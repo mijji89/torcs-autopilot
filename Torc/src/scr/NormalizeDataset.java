@@ -22,6 +22,7 @@ public class NormalizeDataset {
         this.trainingset[2]=f3; 
         this.trainingset[3]=f4;
         this.trainingset[4]=f5;
+        
         if(datasetNormalized.exists()){
             try {
                 this.bw = new BufferedWriter(new FileWriter(datasetNormalized,true));
