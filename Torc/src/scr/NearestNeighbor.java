@@ -16,7 +16,7 @@ public class NearestNeighbor {
         this.readPointsFromCSV("normalizedDataset.csv");
     }
 
-    public void readPointsFromCSV(String filename) {
+    private void readPointsFromCSV(String filename) {
         try {
             BufferedReader bw = new BufferedReader(new FileReader(filename));
             String line;
