@@ -8,7 +8,7 @@ import javax.swing.SwingUtilities;
 
 public class SimpleDriver extends Controller {
 	//Flag booleana che mi permette di leggere o meno i valori di tastiera
-	private boolean training = false;   
+	private boolean training = true;   
 	private char pressed;  
 	
 	/* Costanti di cambio marcia */
@@ -54,7 +54,7 @@ public class SimpleDriver extends Controller {
 
 	// current clutch
 	private float clutch = 0;
-	File file = new File("dataset.csv");
+	File file = new File("datasetMic.csv");
 
 	public SimpleDriver(){
 		if (training & !file.exists()){
