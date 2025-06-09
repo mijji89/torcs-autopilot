@@ -8,7 +8,7 @@ import javax.swing.SwingUtilities;
 
 public class SimpleDriver extends Controller {
 	//Flag booleana che mi permette di leggere o meno i valori di tastiera
-	private boolean training = true;   
+	private boolean training = false;   
 	private char pressed;  
 	
 	/* Costanti di cambio marcia */

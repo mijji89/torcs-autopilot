@@ -4,8 +4,8 @@ public class VectorFeatures {
     private Double[] features; 
     private int actionKey; 
 
-    private final Double[] minVf={-(Math.PI),-0.982,0.0,0.147,0.0,-89.409,-12.224,0.235,-1.0,-1.0,-1.0,-1.0,-1.0,-4.932};
-	private final Double[] maxVf={+(Math.PI),280.206,712.0,5784.10,5739.24,233.022,9.581,0.422,200.0,200.0,200.0,200.0,200.0,8.493 };
+	private final Double[] minVf={-(Math.PI),-0.982,0.0,0.162,0.0,-28.685,-14.359,0.195,-1.0,-1.0,-1.0,-1.0,-1.0,-1.508};
+	private final Double[] maxVf={+(Math.PI),161.684,341.0,5784.08,11527.20,239.753,9.659,0.442,200.0,200.0,200.0,200.0,200.0,6.694};
 
     public VectorFeatures(SensorModel sensors){
         this.features = new Double[14];
