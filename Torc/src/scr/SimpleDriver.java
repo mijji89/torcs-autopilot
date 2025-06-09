@@ -5,16 +5,11 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import javax.swing.SwingUtilities;
-import java.lang.Math;
 
 public class SimpleDriver extends Controller {
 	//Flag booleana che mi permette di leggere o meno i valori di tastiera
 	private boolean training = true;   
 	private char pressed;  
-
-	/*Definizione dei vettori minimi e massimi (utili per la normalizzazione) */
-	final Double[] min={-(Math.PI),0.0,0.0,0.19,0.0,-992.625,-999.936,840.515,0.236136,0.0,0.0,0.0,0.0,0.0};
-	final Double[] max={+(Math.PI),280.206,712.0,5784.10,5737.42,999.766,0.414195,200.0,200.0,200.0,200.0,200.0 };
 	
 	/* Costanti di cambio marcia */
 	final int[] gearUp = { 5000, 6000, 6000, 6500, 7000, 0 };
@@ -52,11 +47,15 @@ public class SimpleDriver extends Controller {
 	final float clutchMaxTime = (float) 1.5;
 
 	BufferedWriter bw; 
+	VectorFeatures vfN;
+	NearestNeighbor nn = new NearestNeighbor();
+
 	private int stuck = 0;
 
 	// current clutch
 	private float clutch = 0;
-	File file = new File("datasetReb.csv");
+
+	File file = new File("datasetMic.csv");
 
 	public SimpleDriver(){
 		if (training & !file.exists()){
@@ -189,96 +188,16 @@ public class SimpleDriver extends Controller {
 	}
 
 	public Action control(SensorModel sensors) {
-		// Controlla se l'auto è attualmente bloccata
-		/**
-			Se l'auto ha un angolo, rispetto alla traccia, superiore a 30°
-			incrementa "stuck" che è una variabile che indica per quanti cicli l'auto è in
-			condizione di difficoltà.
-			Quando l'angolo si riduce, "stuck" viene riportata a 0 per indicare che l'auto è
-			uscita dalla situaizone di difficoltà
-		 **/
+		//Controlla se l'auto è attualmente bloccata
 
 		if (!training){
-			if (Math.abs(sensors.getAngleToTrackAxis()) > stuckAngle) {
-				// update stuck counter
-				stuck++;
-			} else {
-				// if not stuck reset stuck counter
-				stuck = 0;
-			}
-
-			// Applicare la polizza di recupero o meno in base al tempo trascorso
-			/**
-			Se "stuck" è superiore a 25 (stuckTime) allora procedi a entrare in situaizone di RECOVERY
-			per far fronte alla situazione di difficoltà
-			**/
-
-			if (stuck > stuckTime) { //Auto Bloccata
-				/**
-				 * Impostare la marcia e il comando di sterzata supponendo che l'auto stia puntando
-				 * in una direzione al di fuori di pista
-				 **/
-
-				// Per portare la macchina parallela all'asse TrackPos
-				float steer = (float) (-sensors.getAngleToTrackAxis() / steerLock);
-				int gear = -1; // Retromarcia
-
-				// Se l'auto è orientata nella direzione corretta invertire la marcia e sterzare
-				if (sensors.getAngleToTrackAxis() * sensors.getTrackPosition() > 0) {
-					gear = 1;
-					steer = -steer;
-				}
-				clutch = clutching(sensors, clutch);
-				// Costruire una variabile CarControl e restituirla
-				Action action = new Action();
-				action.gear = gear;
-				action.steering = steer;
-				action.accelerate = 1.0;
-				action.brake = 0;
-				action.clutch = clutch;
-				return action;
-			}
-
-			else //Auto non Bloccata
-			{
-				// Calcolo del comando di accelerazione/frenata
-				float accel_and_brake = getAccel(sensors);
-
-				// Calcolare marcia da utilizzare
-				int gear = getGear(sensors);
-
-				// Calcolo angolo di sterzata
-				float steer = getSteer(sensors);
-
-				// Normalizzare lo sterzo
-				if (steer < -1)
-					steer = -1;
-				if (steer > 1)
-					steer = 1;
-
-				// Impostare accelerazione e frenata dal comando congiunto accelerazione/freno
-				float accel, brake;
-				if (accel_and_brake > 0) {
-					accel = accel_and_brake;
-					brake = 0;
-				} else {
-					accel = 0;
-
-					// Applicare l'ABS al freno
-					brake = filterABS(sensors, -accel_and_brake);
-				}
-				clutch = clutching(sensors, clutch);
-
-				// Costruire una variabile CarControl e restituirla
-				Action action = new Action();
-				action.gear = gear;
-				action.steering = steer;
-				action.accelerate = accel;
-				action.brake = brake;
-				action.clutch = clutch;
-				return action;
-			}
-		}else{
+			vfN = new VectorFeatures(sensors);
+			Point p = new Point(vfN, nn);		
+			Action act = new Action();
+			act = predictAction(p.getClasse(), sensors, clutch);
+			return act;
+		}
+		else{
 			VectorFeatures vf= null; 
 			switch (this.pressed) {
 				case 'w': 
@@ -324,6 +243,72 @@ public class SimpleDriver extends Controller {
 		}
 	}
 
+	public Action predictAction (int pClasse, SensorModel sensor, float currclutch){
+		//pClasse è la classe del punto attuale normalizzato prodotta dal metodo findNearesteNeighbor
+		int gear= getGear(sensor); 
+		float clutch= clutching(sensor, currclutch);
+
+		Action act = new Action();
+		act.gear = gear;
+		act.clutch = clutch;
+
+		switch(pClasse){
+			case 0:
+				//accelera
+				act.accelerate = 1.0;
+				act.brake = 0.0;
+				act.steering = 0.0;
+				break;
+			case 1:
+				//sinistra
+				act.accelerate = 0.7;
+				act.brake = 0.0;
+				act.steering = 0.7;
+				break;
+			case 2:
+				//destra
+				act.accelerate = 0.7;
+				act.brake = 0.0;
+				act.steering = -0.7;
+				break;
+			case 3:
+				//frena
+				act.accelerate = 0.0;
+				act.brake = 1.0;
+				act.steering = 0;
+				break;
+			case 4:
+				//retromarcia
+				act.gear = -1;
+				act.accelerate = 1.0; 
+				act.brake = 0.0;
+				act.steering = 0;
+				break;
+			case 5:
+				//avanti sinistra
+				act.accelerate = 0.8; 
+				act.brake = 0.0;
+				act.steering = 0.4;
+				break;
+			case 6:
+				//avanti destra
+				act.accelerate = 0.8; 
+				act.brake = 0.0;
+				act.steering = -0.4;
+				break;
+			case -1:
+				//default
+				act.accelerate = 0.0;
+				act.brake = 0.0;
+				act.steering = 0;
+				break;
+		}
+
+		return act;
+
+		
+	}
+
 	/* Controller per la guida manuale con controlli wasdqer */
 	public 	Action ManualControl(VectorFeatures vf, SensorModel sensor, float currclutch){
 		//Costruisco l'azione 
@@ -349,13 +334,13 @@ public class SimpleDriver extends Controller {
 				//sinistra
 				azione.accelerate = 0.7;
 				azione.brake = 0.0;
-				azione.steering = 1;
+				azione.steering = 0.7;
 				break;
 			case 2:
 				//destra
 				azione.accelerate = 0.7;
 				azione.brake = 0.0;
-				azione.steering = -1;
+				azione.steering = -0.7;
 				break;
 			case 3:
 				//frena
@@ -372,15 +357,15 @@ public class SimpleDriver extends Controller {
 				break;
 			case 5:
 				//avanti sinistra
-				azione.accelerate = 1.0; 
+				azione.accelerate = 0.8; 
 				azione.brake = 0.0;
-				azione.steering = 0.6;
+				azione.steering = 0.4;
 				break;
 			case 6:
 				//avanti destra
-				azione.accelerate = 1.0; 
+				azione.accelerate = 0.8; 
 				azione.brake = 0.0;
-				azione.steering = -0.6;
+				azione.steering = -0.4;
 				break;
 			case -1:
 				//default
