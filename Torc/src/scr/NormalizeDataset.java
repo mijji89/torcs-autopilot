@@ -11,8 +11,8 @@ public class NormalizeDataset {
     private File[] trainingset = new File[4];
     String flof="AngleToTrackAxis;CurrentLapTime;Damage;DistanceFromStartLine;DistanceRaced;Speed;ZSpeed;Z;TrackEdgeSensors0;TrackEdgeSensor-90;TrackEdgeSensor+90;TarckEdgeSensor-50;TrackEdgeSensor+30;TrackPosition;action";
     /*Definizione dei vettori minimi e massimi (utili per la normalizzazione) */
-	private final Double[] min={-(Math.PI),-0.982,0.0,0.162,0.0,-28.685,-14.359,0.195,-1.0,-1.0,-1.0,-1.0,-1.0,-1.508};
-	private final Double[] max={+(Math.PI),161.684,341.0,5784.08,11527.20,239.753,9.659,0.442,200.0,200.0,200.0,200.0,200.0,6.694};
+	private final Double[] min={-(Math.PI),-0.982,0.0,0.173,0.0,-0.01,-14.181,0.228,-1.0,-1.0,-1.0,-1.0,-1.0,-1.10};
+	private final Double[] max={+(Math.PI),189.326,3.0,5784.10,11494.20,255.925,9.327,0.441,200.0,200.0,200.0,200.0,200.0,2.998};
     private File datasetNormalized= new File ("normalizedDataset.csv"); 
     private BufferedWriter bw; 
 

@@ -4,9 +4,9 @@ public class VectorFeatures {
     private Double[] features; 
     private int actionKey; 
 
-	private final Double[] minVf={-(Math.PI),-0.982,0.0,0.162,0.0,-28.685,-14.359,0.195,-1.0,-1.0,-1.0,-1.0,-1.0,-1.508};
-	private final Double[] maxVf={+(Math.PI),161.684,341.0,5784.08,11527.20,239.753,9.659,0.442,200.0,200.0,200.0,200.0,200.0,6.694};
-
+	private final Double[] minVf={-(Math.PI),-0.982,0.0,0.173,0.0,-0.01,-14.181,0.228,-1.0,-1.0,-1.0,-1.0,-1.0,-1.10};
+	private final Double[] maxVf={+(Math.PI),189.326,3.0,5784.10,11494.20,255.925,9.327,0.441,200.0,200.0,200.0,200.0,200.0,2.998};
+    
     public VectorFeatures(SensorModel sensors){
         this.features = new Double[14];
         this.features[0]= sensors.getAngleToTrackAxis(); 
