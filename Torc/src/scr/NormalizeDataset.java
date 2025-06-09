@@ -8,19 +8,20 @@ import java.io.FileWriter;
 import java.io.IOException;
 
 public class NormalizeDataset {
-    private File[] trainingset = new File[4];
+    private File[] trainingset = new File[5];
     String flof="AngleToTrackAxis;CurrentLapTime;Damage;DistanceFromStartLine;DistanceRaced;Speed;ZSpeed;Z;TrackEdgeSensors0;TrackEdgeSensor-90;TrackEdgeSensor+90;TarckEdgeSensor-50;TrackEdgeSensor+30;TrackPosition;action";
     /*Definizione dei vettori minimi e massimi (utili per la normalizzazione) */
-	private final Double[] min={-(Math.PI),-0.982,0.0,0.173,0.0,-0.01,-14.181,0.228,-1.0,-1.0,-1.0,-1.0,-1.0,-1.10};
-	private final Double[] max={+(Math.PI),189.326,3.0,5784.10,11494.20,255.925,9.327,0.441,200.0,200.0,200.0,200.0,200.0,2.998};
+	private final Double[] min={-(Math.PI),-0.982,0.0,0.173,0.0,-32.01,-14.181,0.225,-1.0,-1.0,-1.0,-1.0,-1.0,-4.11};
+	private final Double[] max={+(Math.PI),194.186,1329.0,5784.10,11513.0,255.925,10.127,0.441,200.0,200.0,200.0,200.0,200.0,7.850};
     private File datasetNormalized= new File ("normalizedDataset.csv"); 
     private BufferedWriter bw; 
 
-    public NormalizeDataset(File f1, File f2, File f3, File f4){
+    public NormalizeDataset(File f1, File f2, File f3, File f4, File f5){
         this.trainingset[0]=f1; 
         this.trainingset[1]=f2; 
         this.trainingset[2]=f3; 
         this.trainingset[3]=f4;
+        this.trainingset[4]=f5;
         if(datasetNormalized.exists()){
             try {
                 this.bw = new BufferedWriter(new FileWriter(datasetNormalized,true));
@@ -76,7 +77,7 @@ public class NormalizeDataset {
     }
 
     public static void main(String[] args){
-        NormalizeDataset nd= new NormalizeDataset(new File("C:\\Users\\Benedetta\\Desktop\\PROGETTO AI\\ProgettoIA\\Torc\\classes\\datasetBet.csv"), new File("C:\\Users\\Benedetta\\Desktop\\PROGETTO AI\\ProgettoIA\\Torc\\classes\\datasetMic.csv"),new File("C:\\Users\\Benedetta\\Desktop\\PROGETTO AI\\ProgettoIA\\Torc\\classes\\datasetReb.csv"), new File("C:\\Users\\Benedetta\\Desktop\\PROGETTO AI\\ProgettoIA\\Torc\\classes\\datasetAndre.csv"));
+        NormalizeDataset nd= new NormalizeDataset(new File("C:\\Users\\Benedetta\\Desktop\\PROGETTO AI\\ProgettoIA\\Torc\\classes\\datasetBet.csv"), new File("C:\\Users\\Benedetta\\Desktop\\PROGETTO AI\\ProgettoIA\\Torc\\classes\\datasetMic.csv"),new File("C:\\Users\\Benedetta\\Desktop\\PROGETTO AI\\ProgettoIA\\Torc\\classes\\datasetReb.csv"), new File("C:\\Users\\Benedetta\\Desktop\\PROGETTO AI\\ProgettoIA\\Torc\\classes\\datasetAndre.csv"), new File("C:\\Users\\Benedetta\\Desktop\\PROGETTO AI\\ProgettoIA\\Torc\\classes\\datasetManovre.csv"));
         nd.readFromCSV();
         System.out.println("Dataset prodotto!");
     }
