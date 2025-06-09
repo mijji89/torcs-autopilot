@@ -55,7 +55,7 @@ public class SimpleDriver extends Controller {
 	// current clutch
 	private float clutch = 0;
 
-	File file = new File("datasetBet.csv");
+	File file = new File("datasetMic.csv");
 
 	public SimpleDriver(){
 		if (training & !file.exists()){
