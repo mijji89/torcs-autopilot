@@ -13,10 +13,10 @@ public class NearestNeighbor {
 
     public NearestNeighbor() {
         this.trainingData = new ArrayList<>();
-        this.readPointsFromCSV("normalizedDataset.csv");
+        this.readPointsFromCSV("C:\\Users\\Benedetta\\Desktop\\PROGETTO AI\\ProgettoIA\\Torc\\src\\normalizedDataset.csv");
     }
 
-    public void readPointsFromCSV(String filename) {
+    private void readPointsFromCSV(String filename) {
         try {
             BufferedReader bw = new BufferedReader(new FileReader(filename));
             String line;
@@ -34,10 +34,10 @@ public class NearestNeighbor {
         }
     }
     
-    public Point findNearestNeighbor(Point testPoint) {
+    public int findNearestNeighbor(Point testPoint) {
         if (trainingData.isEmpty()) {
             System.out.println("training set vuoto");
-            return new Point(" "); // Nessun dato di allenamento disponibile, restituisci un punto vuoto
+            return -1; // Nessun dato di allenamento disponibile, restituisci un punto vuoto
         }
         
         Point nearestNeighbor = trainingData.get(0); // Imposta il primo punto come punto più vicino iniziale
@@ -52,7 +52,7 @@ public class NearestNeighbor {
                 nearestNeighbor = point;
             }
         }
-        return nearestNeighbor; //opzione di tornare la classe per gestirla nel simpleDriver come fatto con i tasti
+        return nearestNeighbor.getClasse(); //opzione di tornare la classe per gestirla nel simpleDriver come fatto con i tasti
     }
     
     public List<Point> getTrainingData() {
