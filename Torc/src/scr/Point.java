@@ -27,5 +27,9 @@ public class Point {
 		}
             return Math.sqrt(sum);
     }
+
+	public int getClasse(){
+		return this.classe;
+	}
 }
 
