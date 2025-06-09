@@ -8,7 +8,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 
 public class NormalizeDataset {
-    private File[] trainingset = new File[3];
+    private File[] trainingset = new File[4];
     String flof="AngleToTrackAxis;CurrentLapTime;Damage;DistanceFromStartLine;DistanceRaced;Speed;ZSpeed;Z;TrackEdgeSensors0;TrackEdgeSensor-90;TrackEdgeSensor+90;TarckEdgeSensor-50;TrackEdgeSensor+30;TrackPosition;action";
     /*Definizione dei vettori minimi e massimi (utili per la normalizzazione) */
 	private final Double[] min={-(Math.PI),-0.982,0.0,0.147,0.0,-89.409,-12.224,0.235,-1.0,-1.0,-1.0,-1.0,-1.0,-4.932};
@@ -16,10 +16,11 @@ public class NormalizeDataset {
     private File datasetNormalized= new File ("normalizedDataset.csv"); 
     private BufferedWriter bw; 
 
-    public NormalizeDataset(File f1, File f2, File f3){
+    public NormalizeDataset(File f1, File f2, File f3, File f4){
         this.trainingset[0]=f1; 
         this.trainingset[1]=f2; 
         this.trainingset[2]=f3; 
+        this.trainingset[3]=f4;
         if(datasetNormalized.exists()){
             try {
                 this.bw = new BufferedWriter(new FileWriter(datasetNormalized,true));
@@ -75,7 +76,7 @@ public class NormalizeDataset {
     }
 
     public static void main(String[] args){
-        NormalizeDataset nd= new NormalizeDataset(new File("C:\\Users\\Benedetta\\Desktop\\PROGETTO AI\\ProgettoIA\\Torc\\classes\\datasetBet.csv"), new File("C:\\Users\\Benedetta\\Desktop\\PROGETTO AI\\ProgettoIA\\Torc\\classes\\datasetMic.csv"),new File("C:\\Users\\Benedetta\\Desktop\\PROGETTO AI\\ProgettoIA\\Torc\\classes\\datasetReb.csv"));
+        NormalizeDataset nd= new NormalizeDataset(new File("C:\\Users\\Benedetta\\Desktop\\PROGETTO AI\\ProgettoIA\\Torc\\classes\\datasetBet.csv"), new File("C:\\Users\\Benedetta\\Desktop\\PROGETTO AI\\ProgettoIA\\Torc\\classes\\datasetMic.csv"),new File("C:\\Users\\Benedetta\\Desktop\\PROGETTO AI\\ProgettoIA\\Torc\\classes\\datasetReb.csv"), new File("C:\\Users\\Benedetta\\Desktop\\PROGETTO AI\\ProgettoIA\\Torc\\classes\\datasetAndre.csv"));
         nd.readFromCSV();
         System.out.println("Dataset prodotto!");
     }
