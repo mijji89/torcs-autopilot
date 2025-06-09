@@ -3,7 +3,12 @@ package scr;
 public class Point {
     private Double[] features; 
     private int classe;
-    
+
+	public Point(VectorFeatures vfN, NearestNeighbor nn){
+		this.features = new Double[] {vfN.getFeatures()[0], vfN.getFeatures()[5], vfN.getFeatures()[8], vfN.getFeatures()[9], vfN.getFeatures()[10], vfN.getFeatures()[11], vfN.getFeatures()[12], vfN.getFeatures()[13]};
+		this.classe = nn.findNearestNeighbor(this);
+	}
+
     /*Costruttore per la gestione della lettura dei dati del trainingSet*/
 	public Point(String lineCSV){
 		String[] parts = lineCSV.split(";");

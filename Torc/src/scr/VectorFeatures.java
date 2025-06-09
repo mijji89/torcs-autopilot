@@ -4,6 +4,30 @@ public class VectorFeatures {
     private Double[] features; 
     private int actionKey; 
 
+    private final Double[] minVf={-(Math.PI),-0.982,0.0,0.147,0.0,-89.409,-12.224,0.235,-1.0,-1.0,-1.0,-1.0,-1.0,-4.932};
+	private final Double[] maxVf={+(Math.PI),280.206,712.0,5784.10,5739.24,233.022,9.581,0.422,200.0,200.0,200.0,200.0,200.0,8.493 };
+
+    public VectorFeatures(SensorModel sensors){
+        this.features = new Double[14];
+        this.features[0]= sensors.getAngleToTrackAxis(); 
+        this.features[1]=sensors.getCurrentLapTime(); 
+        this.features[2]=sensors.getDamage(); 
+        this.features[3]=sensors.getDistanceFromStartLine(); 
+        this.features[4]=sensors.getDistanceRaced(); 
+        this.features[5]=sensors.getSpeed(); 
+        this.features[6]=sensors.getZSpeed(); //per le buche
+        this.features[7]=sensors.getZ(); 
+        //Distanza dalle linee di corsia
+        this.features[8]=sensors.getTrackEdgeSensors()[9];//0°
+        this.features[9]=sensors.getTrackEdgeSensors()[0];//-90°
+        this.features[10]=sensors.getTrackEdgeSensors()[18]; //+90°
+        this.features[11]=sensors.getTrackEdgeSensors()[4]; //-50°
+        this.features[12]=sensors.getTrackEdgeSensors()[12]; //+30°
+        this.features[13]=sensors.getTrackPosition();
+        this.features = this.normalizeMinMax(minVf, maxVf); 
+
+    }
+
     public VectorFeatures(SensorModel sensors, int action){
         this.features = new Double[14];
         this.features[0]= sensors.getAngleToTrackAxis(); 

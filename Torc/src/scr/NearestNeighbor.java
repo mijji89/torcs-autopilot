@@ -13,7 +13,7 @@ public class NearestNeighbor {
 
     public NearestNeighbor() {
         this.trainingData = new ArrayList<>();
-        this.readPointsFromCSV("normalizedDataset.csv");
+        this.readPointsFromCSV("C:\\Users\\Benedetta\\Desktop\\PROGETTO AI\\ProgettoIA\\Torc\\src\\normalizedDataset.csv");
     }
 
     private void readPointsFromCSV(String filename) {
