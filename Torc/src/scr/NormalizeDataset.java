@@ -78,7 +78,7 @@ public class NormalizeDataset {
     }
 
     public static void main(String[] args){
-        NormalizeDataset nd= new NormalizeDataset(new File("C:\\Users\\Benedetta\\Desktop\\PROGETTO AI\\ProgettoIA\\Torc\\classes\\datasetBet.csv"), new File("C:\\Users\\Benedetta\\Desktop\\PROGETTO AI\\ProgettoIA\\Torc\\classes\\datasetMic.csv"),new File("C:\\Users\\Benedetta\\Desktop\\PROGETTO AI\\ProgettoIA\\Torc\\classes\\datasetReb.csv"), new File("C:\\Users\\Benedetta\\Desktop\\PROGETTO AI\\ProgettoIA\\Torc\\classes\\datasetAndre.csv"), new File("C:\\Users\\Benedetta\\Desktop\\PROGETTO AI\\ProgettoIA\\Torc\\classes\\datasetManovre.csv"));
+        NormalizeDataset nd= new NormalizeDataset(new File("../classes/datasetBet.csv"), new File("../classes/datasetMic.csv"),new File("../classes/datasetReb.csv"), new File("../classes/datasetAndre.csv"), new File("../classes/datasetManovre.csv"));
         nd.readFromCSV();
         System.out.println("Dataset prodotto!");
     }
