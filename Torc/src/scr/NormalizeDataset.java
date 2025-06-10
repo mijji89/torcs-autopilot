@@ -36,12 +36,12 @@ public class NormalizeDataset {
      * @param f5 Quinto file di training raw
      */
 
-    public NormalizeDataset(File f1, File f2, File f3, File f4, File f5){
+    public NormalizeDataset(File f1 , File f2, File f3, File f4, File f5){
         this.trainingset[0]=f1; 
         this.trainingset[1]=f2; 
         this.trainingset[2]=f3; 
         this.trainingset[3]=f4;
-        //this.trainingset[4]=f5;
+        this.trainingset[4]=f5;
         
         if(datasetNormalized.exists()){
             try {
