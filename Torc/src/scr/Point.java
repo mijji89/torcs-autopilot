@@ -44,7 +44,7 @@ public class Point {
 		for(int i = 0; i<this.features.length; i++){
 			sum += Math.pow(this.features[i] - other.features[i], 2);
 		}
-            return Math.sqrt(sum);
+        return Math.sqrt(sum);
     }
 
 	/**
