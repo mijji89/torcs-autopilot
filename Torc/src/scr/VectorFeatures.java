@@ -13,8 +13,8 @@ public class VectorFeatures {
     private Double[] features; 
     private int actionKey; 
 
-	private final Double[] minVf={-(Math.PI),-0.982,0.0,0.166,0.0,-90.099,-15.153,0.214,-1.0,-1.0,-1.0,-1.0,-1.0,-7.42};
-	private final Double[] maxVf={+(Math.PI),290.046,79.0,5784.10,11513.0,243.755,10.112,0.429,200.0,200.0,200.0,200.0,200.0,7.702};
+    private final Double[] minVf={-0.496,-0.982,0.0,0.155,0.0,-30.443,-14.357,0.226,-1.0,-1.0,-1.0,-1.0,-1.0,-3.701};
+	private final Double[] maxVf={0.851,180.176,1.0,5784.040,17306.600,236.944,8.522,0.392,200.0,11.017,11.354,28.767,200.0,5.268};
 
     /**
      * Costruttore che costruisce il vectorFeatures con valori dei parametri normalizzati
@@ -102,7 +102,7 @@ public class VectorFeatures {
      * 
      */
     public void setFeatures(Double angleAxis, Double speed, Double angleZero, Double angleMinNinenty , Double angleMaxNinety, Double angleMinFifty, Double angleMaxThirty, Double trackPos ){
-        this.features[0]=angleAxis; 
+        this.features[0]=angleAxis;
         this.features[5]=speed; 
         this.features[8]=angleZero; 
         this.features[9]=angleMinNinenty; 

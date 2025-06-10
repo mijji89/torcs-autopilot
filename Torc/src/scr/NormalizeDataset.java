@@ -19,11 +19,11 @@ import java.io.IOException;
  * - una stringa contenente la riga di intestazione da saltare quando si leggono i training dataset "raw" 
  */
 public class NormalizeDataset {
-    private File trainingset;
+    private File[] trainingset = new File[3];
     String flof="AngleToTrackAxis;CurrentLapTime;Damage;DistanceFromStartLine;DistanceRaced;Speed;ZSpeed;Z;TrackEdgeSensors0;TrackEdgeSensor-90;TrackEdgeSensor+90;TarckEdgeSensor-50;TrackEdgeSensor+30;TrackPosition;action";
     /*Definizione dei vettori minimi e massimi (utili per la normalizzazione) */
-	private final Double[] min={-(Math.PI),-0.982,0.0,0.166,0.0,-90.099,-15.153,0.214,-1.0,-1.0,-1.0,-1.0,-1.0,-7.42};
-	private final Double[] max={+(Math.PI),290.046,79.0,5784.10,11513.0,243.755,10.112,0.429,200.0,200.0,200.0,200.0,200.0,7.702};
+	private final Double[] min={-0.496,-0.982,0.0,0.155,0.0,-30.443,-14.357,0.226,-1.0,-1.0,-1.0,-1.0,-1.0,-3.701};
+	private final Double[] max={0.851,180.176,1.0,5784.040,17306.600,236.944,8.522,0.392,200.0,11.017,11.354,28.767,200.0,5.268};
     private File datasetNormalized= new File ("normalizedDataset.csv"); 
     private BufferedWriter bw; 
 
@@ -36,9 +36,10 @@ public class NormalizeDataset {
      * @param f5 Quinto file di training raw
      */
 
-    public NormalizeDataset(File f1){
-        this.trainingset = f1;
-        
+    public NormalizeDataset(File f1 , File f2, File f3){
+        this.trainingset[0]=f1; 
+        this.trainingset[1]=f2; 
+        this.trainingset[2]=f3; 
         if(datasetNormalized.exists()){
             try {
                 this.bw = new BufferedWriter(new FileWriter(datasetNormalized,true));
@@ -104,7 +105,7 @@ public class NormalizeDataset {
      * Metodo main che permette di generare il file "normalizzato" quando viene eseguito 
      */
     public static void main(String[] args){
-        NormalizeDataset nd= new NormalizeDataset(new File("../classes/dataset.csv"));
+        NormalizeDataset nd= new NormalizeDataset(  new File("../classes/dataset1Lap.csv"),new File("../classes/dataset2Lap.csv"),new File("../classes/dataset3Lap.csv"));
         nd.readFromCSV();
         System.out.println("Dataset prodotto!");
     }
