@@ -19,11 +19,11 @@ import java.io.IOException;
  * - una stringa contenente la riga di intestazione da saltare quando si leggono i training dataset "raw" 
  */
 public class NormalizeDataset {
-    private File[] trainingset = new File[5];
+    private File trainingset;
     String flof="AngleToTrackAxis;CurrentLapTime;Damage;DistanceFromStartLine;DistanceRaced;Speed;ZSpeed;Z;TrackEdgeSensors0;TrackEdgeSensor-90;TrackEdgeSensor+90;TarckEdgeSensor-50;TrackEdgeSensor+30;TrackPosition;action";
     /*Definizione dei vettori minimi e massimi (utili per la normalizzazione) */
-	private final Double[] min={-(Math.PI),-0.982,0.0,0.173,0.0,-32.01,-14.181,0.225,-1.0,-1.0,-1.0,-1.0,-1.0,-4.11};
-	private final Double[] max={+(Math.PI),194.186,1329.0,5784.10,11513.0,255.925,10.127,0.441,200.0,200.0,200.0,200.0,200.0,7.850};
+	private final Double[] min={-(Math.PI),-0.982,0.0,0.166,0.0,-90.099,-15.153,0.214,-1.0,-1.0,-1.0,-1.0,-1.0,-7.42};
+	private final Double[] max={+(Math.PI),290.046,79.0,5784.10,11513.0,243.755,10.112,0.429,200.0,200.0,200.0,200.0,200.0,7.702};
     private File datasetNormalized= new File ("normalizedDataset.csv"); 
     private BufferedWriter bw; 
 
@@ -36,12 +36,8 @@ public class NormalizeDataset {
      * @param f5 Quinto file di training raw
      */
 
-    public NormalizeDataset(File f1 , File f2, File f3, File f4, File f5){
-        this.trainingset[0]=f1; 
-        this.trainingset[1]=f2; 
-        this.trainingset[2]=f3; 
-        this.trainingset[3]=f4;
-        this.trainingset[4]=f5;
+    public NormalizeDataset(File f1){
+        this.trainingset = f1;
         
         if(datasetNormalized.exists()){
             try {
@@ -67,28 +63,27 @@ public class NormalizeDataset {
      * Legge i dati dal training set "raw", li normalizza tramite il MinMax scaling e li scrive su un nuovo file CSV di output
      */
     public void readFromCSV(){
-        for(int i=0; i<trainingset.length;i++ ){
-            try{
-                BufferedReader bf= new BufferedReader(new FileReader(trainingset[i]));
-                String line; 
-                VectorFeatures vf; 
-                while ((line=bf.readLine()) != null){
-                    if(!line.startsWith(flof)){
-                        vf= new VectorFeatures(line);
-                        Double[] vfn= vf.normalizeMinMax(this.min, this.max);
-                        vf.setFeatures(vfn[0],vfn[5], vfn[8], vfn[9], vfn[10], vfn[11],vfn[12],vfn[13]);
-                        writeCSV(vf);
-                    }
-                    else{
-                        continue; 
-                    }
-
+        try{
+            BufferedReader bf= new BufferedReader(new FileReader(trainingset));
+            String line; 
+            VectorFeatures vf; 
+            while ((line=bf.readLine()) != null){
+                if(!line.startsWith(flof)){
+                    vf= new VectorFeatures(line);
+                    Double[] vfn= vf.normalizeMinMax(this.min, this.max);
+                    vf.setFeatures(vfn[0],vfn[5], vfn[8], vfn[9], vfn[10], vfn[11],vfn[12],vfn[13]);
+                    writeCSV(vf);
+                }
+                else{
+                    continue; 
                 }
 
-            }catch(IOException ex){
-                System.err.println(ex);
             }
+
+        }catch(IOException ex){
+            System.err.println(ex);
         }
+    
     }
 
     /**
@@ -109,7 +104,7 @@ public class NormalizeDataset {
      * Metodo main che permette di generare il file "normalizzato" quando viene eseguito 
      */
     public static void main(String[] args){
-        NormalizeDataset nd= new NormalizeDataset(new File("../classes/datasetBet.csv"), new File("../classes/datasetMic.csv"),new File("../classes/datasetReb.csv"), new File("../classes/datasetAndre.csv"), new File("../classes/datasetManovre.csv"));
+        NormalizeDataset nd= new NormalizeDataset(new File("../classes/dataset.csv"));
         nd.readFromCSV();
         System.out.println("Dataset prodotto!");
     }

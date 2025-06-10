@@ -38,7 +38,7 @@ public class NearestNeighbor {
                     continue; // Skip header
                 }
 
-                trainingData.add(new Point(line));
+                this.trainingData.add(new Point(line));
                 System.out.println("Sto leggendo i punti.");
             }
             bw.close();
@@ -54,14 +54,14 @@ public class NearestNeighbor {
      * @return la classe del punto più vicino nel training set, o -1 se il training set è vuoto
      */
     public int findNearestNeighbor(Point testPoint) {
-        if (trainingData.isEmpty()) {
+        if (this.trainingData.isEmpty()) {
             System.out.println("training set vuoto");
             return -1; 
         }
-        Point nearestNeighbor = trainingData.get(0); 
+        Point nearestNeighbor = this.trainingData.get(0); 
         double minDistance = testPoint.distance(nearestNeighbor); 
 
-        for (Point point : trainingData) {
+        for (Point point : this.trainingData) {
             double distance = testPoint.distance(point);
             if (distance < minDistance) {
                 minDistance = distance;
@@ -77,6 +77,6 @@ public class NearestNeighbor {
      * @return Lista di punti di training
      */
     public List<Point> getTrainingData() {
-        return trainingData;
+        return this.trainingData;
     }
 }
