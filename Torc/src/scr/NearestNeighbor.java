@@ -9,7 +9,7 @@ import java.util.List;
 public class NearestNeighbor {
     
     private List<Point> trainingData;
-    private String flof = "AngleToTrackAxis;Speed;TrackEdgeSensors0;TrackEdgeSensor-90;TrackEdgeSensor+90;TarckEdgeSensor-50;TrackEdgeSensor+30;TrackPosition;action";
+    private String flof = "AngleToTrackAxis;Damage;Speed;TrackEdgeSensors0;TrackEdgeSensor-90;TrackEdgeSensor+90;TarckEdgeSensor-50;TrackEdgeSensor+30;TrackPosition;action";
 
     public NearestNeighbor() {
         this.trainingData = new ArrayList<>();

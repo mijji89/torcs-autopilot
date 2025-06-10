@@ -54,8 +54,9 @@ public class VectorFeatures {
         return this.actionKey;
     }
 
-    public void setFeatures(Double angleAxis, Double speed, Double angleZero, Double angleMinNinenty , Double angleMaxNinety, Double angleMinFifty, Double angleMaxThirty, Double trackPos ){
+    public void setFeatures(Double angleAxis, Double damage, Double speed, Double angleZero, Double angleMinNinenty , Double angleMaxNinety, Double angleMinFifty, Double angleMaxThirty, Double trackPos ){
         this.features[0]=angleAxis; 
+        this.features[2]=damage;
         this.features[5]=speed; 
         this.features[8]=angleZero; 
         this.features[9]=angleMinNinenty; 

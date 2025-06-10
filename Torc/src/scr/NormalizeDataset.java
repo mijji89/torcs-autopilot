@@ -26,7 +26,7 @@ public class NormalizeDataset {
         if(datasetNormalized.exists()){
             try {
                 this.bw = new BufferedWriter(new FileWriter(datasetNormalized,true));
-				this.bw.append("AngleToTrackAxis;Speed;TrackEdgeSensors0;TrackEdgeSensor-90;TrackEdgeSensor+90;TarckEdgeSensor-50;TrackEdgeSensor+30;TrackPosition;action");
+				this.bw.append("AngleToTrackAxis;Damage;Speed;TrackEdgeSensors0;TrackEdgeSensor-90;TrackEdgeSensor+90;TarckEdgeSensor-50;TrackEdgeSensor+30;TrackPosition;action");
                 this.bw.write("\n");
             } catch (IOException ex) {
             }
@@ -34,7 +34,7 @@ public class NormalizeDataset {
         else{
             try{
 				this.bw = new BufferedWriter(new FileWriter(datasetNormalized));
-				this.bw.write("AngleToTrackAxis;Speed;TrackEdgeSensors0;TrackEdgeSensor-90;TrackEdgeSensor+90;TarckEdgeSensor-50;TrackEdgeSensor+30;TrackPosition;action");
+				this.bw.write("AngleToTrackAxis;Damage;Speed;TrackEdgeSensors0;TrackEdgeSensor-90;TrackEdgeSensor+90;TarckEdgeSensor-50;TrackEdgeSensor+30;TrackPosition;action");
 				this.bw.write("\n");
 			}catch(IOException ex){
 				System.err.println();
@@ -53,7 +53,7 @@ public class NormalizeDataset {
                     if(!line.startsWith(flof)){
                         vf= new VectorFeatures(line);
                         Double[] vfn= vf.normalizeMinMax(this.min, this.max);
-                        vf.setFeatures(vfn[0],vfn[5], vfn[8], vfn[9], vfn[10], vfn[11],vfn[12],vfn[13]);
+                        vf.setFeatures(vfn[0],vfn[2],vfn[5], vfn[8], vfn[9], vfn[10], vfn[11],vfn[12],vfn[13]);
                         writeCSV(vf);
                     }
                     else{
@@ -70,7 +70,7 @@ public class NormalizeDataset {
 
     public void writeCSV(VectorFeatures vf){
         try{
-            this.bw.append(vf.getFeatures()[0]+";"+vf.getFeatures()[5]+";"+ vf.getFeatures()[8]+";"+ vf.getFeatures()[9]+";"+vf.getFeatures()[10]+";"+ vf.getFeatures()[11]+";"+vf.getFeatures()[12]+";"+vf.getFeatures()[13]+";"+vf.getActionKey());
+            this.bw.append(vf.getFeatures()[0]+";"+vf.getFeatures()[2]+";"+vf.getFeatures()[5]+";"+ vf.getFeatures()[8]+";"+ vf.getFeatures()[9]+";"+vf.getFeatures()[10]+";"+ vf.getFeatures()[11]+";"+vf.getFeatures()[12]+";"+vf.getFeatures()[13]+";"+vf.getActionKey());
             this.bw.append('\n');
         }catch(IOException ex){
             System.err.println(ex);
