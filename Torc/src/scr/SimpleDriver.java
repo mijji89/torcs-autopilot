@@ -20,6 +20,7 @@ import javax.swing.SwingUtilities;
  * - {@code file}: riferimento al file CSV per il salvataggio dei dati di training
  */
 public class SimpleDriver extends Controller {
+	//Flag booleana che mi permette di leggere o meno i valori di tastiera
 	private boolean training = false;   
 	private char pressed;  
 	
@@ -58,7 +59,7 @@ public class SimpleDriver extends Controller {
 	NearestNeighbor nn = new NearestNeighbor();
 	private float clutch = 0;
 
-	File file = new File("datasetMic.csv");
+	File file = new File("dataset.csv");
 
 	/**
 	 * Costruttore che, se in modalità addestramento, permette di: 
