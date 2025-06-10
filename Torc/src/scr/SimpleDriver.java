@@ -21,7 +21,7 @@ import javax.swing.SwingUtilities;
  */
 public class SimpleDriver extends Controller {
 	//Flag booleana che mi permette di leggere o meno i valori di tastiera
-	private boolean training = false;   
+	private boolean training = true;   
 	private char pressed;  
 	
 	final int[] gearUp = { 5000, 6000, 6000, 6500, 7000, 0 };
