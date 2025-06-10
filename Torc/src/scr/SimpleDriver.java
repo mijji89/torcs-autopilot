@@ -20,7 +20,7 @@ import javax.swing.SwingUtilities;
  * - {@code file}: riferimento al file CSV per il salvataggio dei dati di training
  */
 public class SimpleDriver extends Controller {
-	private boolean training = true;   
+	private boolean training = false;   
 	private char pressed;  
 	
 	final int[] gearUp = { 5000, 6000, 6000, 6500, 7000, 0 };

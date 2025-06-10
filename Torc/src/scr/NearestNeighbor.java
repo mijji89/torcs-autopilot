@@ -21,7 +21,7 @@ public class NearestNeighbor {
      */
     public NearestNeighbor() {
         this.trainingData = new ArrayList<>();
-        this.readPointsFromCSV("normalizedDataset.csv");
+        this.readPointsFromCSV("../src/normalizedDataset.csv");
     }
 
     /**
