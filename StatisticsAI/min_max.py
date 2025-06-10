@@ -4,9 +4,9 @@ import os # Aggiungi questo import
 
 print(f"Current working directory: {os.getcwd()}") 
 # Carica i file CSV con separatore ';'
-df = pd.read_csv("Torc\classes\datasetMic1Lap.csv", delimiter=';')
-df1 = pd.read_csv("Torc\classes\datasetMic2Lap.csv", delimiter=';')
-df3 = pd.read_csv("Torc\classes\datasetMic3Lap.csv", delimiter=';')
+df = pd.read_csv("Torc\classes\dataset1Lap.csv", delimiter=';')
+df1 = pd.read_csv("Torc\classes\dataset2Lap.csv", delimiter=';')
+df3 = pd.read_csv("Torc\classes\dataset3Lap.csv", delimiter=';')
 
 # Converte tutte le colonne numeriche da stringa a float (se necessario)
 df = df.apply(pd.to_numeric, errors='coerce')

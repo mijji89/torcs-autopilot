@@ -106,7 +106,7 @@ public class NormalizeDataset {
      * Metodo main che permette di generare il file "normalizzato" quando viene eseguito 
      */
     public static void main(String[] args){
-        NormalizeDataset nd= new NormalizeDataset(  new File("../classes/datasetMic1Lap.csv"),new File("../classes/datasetMic2Lap.csv"),new File("../classes/datasetMic3Lap.csv"));
+        NormalizeDataset nd= new NormalizeDataset(  new File("../classes/dataset1Lap.csv"),new File("../classes/dataset2Lap.csv"),new File("../classes/dataset3Lap.csv"));
         nd.readFromCSV();
         System.out.println("Dataset prodotto!");
     }
