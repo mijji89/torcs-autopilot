@@ -60,32 +60,34 @@ public class NormalizeDataset {
         }
     }
 
-    /**
+       /**
      * Legge i dati dal training set "raw", li normalizza tramite il MinMax scaling e li scrive su un nuovo file CSV di output
      */
     public void readFromCSV(){
-        try{
-            BufferedReader bf= new BufferedReader(new FileReader(trainingset));
-            String line; 
-            VectorFeatures vf; 
-            while ((line=bf.readLine()) != null){
-                if(!line.startsWith(flof)){
-                    vf= new VectorFeatures(line);
-                    Double[] vfn= vf.normalizeMinMax(this.min, this.max);
-                    vf.setFeatures(vfn[0],vfn[5], vfn[8], vfn[9], vfn[10], vfn[11],vfn[12],vfn[13]);
-                    writeCSV(vf);
-                }
-                else{
-                    continue; 
+        for(int i=0; i<trainingset.length;i++ ){
+            try{
+                BufferedReader bf= new BufferedReader(new FileReader(trainingset[i]));
+                String line; 
+                VectorFeatures vf; 
+                while ((line=bf.readLine()) != null){
+                    if(!line.startsWith(flof)){
+                        vf= new VectorFeatures(line);
+                        Double[] vfn= vf.normalizeMinMax(this.min, this.max);
+                        vf.setFeatures(vfn[0],vfn[5], vfn[8], vfn[9], vfn[10], vfn[11],vfn[12],vfn[13]);
+                        writeCSV(vf);
+                    }
+                    else{
+                        continue; 
+                    }
+
                 }
 
+            }catch(IOException ex){
+                System.err.println(ex);
             }
-
-        }catch(IOException ex){
-            System.err.println(ex);
         }
-    
     }
+
 
     /**
      * Scrive su un file CSV i dati di interesse dopo la normalizzaizone e la classe dell'azione corrispondente
