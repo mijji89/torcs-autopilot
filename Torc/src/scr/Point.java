@@ -14,7 +14,7 @@ public class Point {
 	 * @param nn istanza di NearestNeighbor che permette di trovare il punto più simile
 	 */
 	public Point(VectorFeatures vfN, NearestNeighbor nn){
-		this.features = new Double[] {vfN.getFeatures()[0], vfN.getFeatures()[5], vfN.getFeatures()[8], vfN.getFeatures()[9], vfN.getFeatures()[10], vfN.getFeatures()[11], vfN.getFeatures()[12], vfN.getFeatures()[13]};
+		this.features = new Double[] {vfN.getFeatures()[0], vfN.getFeatures()[2], vfN.getFeatures()[5], vfN.getFeatures()[8], vfN.getFeatures()[9], vfN.getFeatures()[10], vfN.getFeatures()[11], vfN.getFeatures()[12], vfN.getFeatures()[13]};
 		this.classe = nn.findNearestNeighbor(this);
 	}
 
@@ -26,7 +26,7 @@ public class Point {
 	public Point(String lineCSV){
 		String[] parts = lineCSV.split(";");
 		int n = parts.length;
-		this.features = new Double[8];
+		this.features = new Double[9];
 		for(int i=0; i<n-1; i++){
 			this.features[i] = Double.parseDouble(parts[i].trim());
 		}
