@@ -6,18 +6,26 @@ import java.io.FileWriter;
 import java.io.IOException;
 import javax.swing.SwingUtilities;
 
+/**
+ * La classe implementa la guida sia manuale che autonoma, gestendo in maniera automatica i freni e le marce.
+ * 
+ * 
+ * - {@code training}: flag booleana che permette di abilitare o meno la modalità di training
+ * - {@code pressed}: mantiene il carattere corrispondente al tasto premuto (w-a-s-d-q-e-r)
+ * - {@code gearUp, gearDown}: array di soglie per il cambio marci automatico
+ * - {@code bw}: BufferedWriter che consente di scrivere sul file CSV
+ * - {@code vfN}: vettore delle features normalizzate
+ * - {@code nn}: classificatore NearestNeighbor utilizzata per predirre l'azione da effettuare
+ * - {@code clutch}:valore corrente della frizione (inizialmente a 0)
+ * - {@code file}: riferimento al file CSV per il salvataggio dei dati di training
+ */
 public class SimpleDriver extends Controller {
 	//Flag booleana che mi permette di leggere o meno i valori di tastiera
 	private boolean training = false;   
 	private char pressed;  
 	
-	/* Costanti di cambio marcia */
 	final int[] gearUp = { 5000, 6000, 6000, 6500, 7000, 0 };
 	final int[] gearDown = { 0, 2500, 3000, 3000, 3500, 3500 };
-
-	/* Constanti */
-	final int stuckTime = 25;
-	final float stuckAngle = (float) 0.523598775; // PI/6
 
 	/* Costanti di accelerazione e di frenata */
 	final float maxSpeedDist = 70;
@@ -49,14 +57,17 @@ public class SimpleDriver extends Controller {
 	BufferedWriter bw; 
 	VectorFeatures vfN;
 	NearestNeighbor nn = new NearestNeighbor();
-
-	private int stuck = 0;
-
-	// current clutch
 	private float clutch = 0;
 
 	File file = new File("dataset.csv");
 
+	/**
+	 * Costruttore che, se in modalità addestramento, permette di: 
+	 * 
+	 * - Inizializzare il BufferedWriter se il file su cui scrivere non esiste
+	 * - Continuare a scrivere sul file  se questo esiste
+	 * - Lanciare l'interfaccia grafica che permette la raccolta dei dati in ambo i casi
+	 */
 	public SimpleDriver(){
 		if (training & !file.exists()){
 			try{
@@ -79,11 +90,19 @@ public class SimpleDriver extends Controller {
 		}
 	}
 
+	/**
+	 * Imposta la variabile pressed facendola corrispondere con il carattere associato al pulsante premuto 
+	 * 
+	 * @param ch carattere corrispondente al pulsante premuto (w-a-s-d-q-e-r)
+	 */
 	public  void setPressed(char ch){
-		this.pressed=ch; 
-		
+		this.pressed=ch; 	
 	}
 
+	/**
+	 * Scrive una nuova riga vuota sul CSV di training.
+	 * Viene chiamata automaticamente quando si riavvia una partita
+	 */
 	public void reset() {
         try {
             this.bw.append("\n");
@@ -93,6 +112,10 @@ public class SimpleDriver extends Controller {
 
 	}
 
+	/**
+	 * Scrive una nuova riga vuota sul CSV di training. 
+	 * Viene automaticamente chiamata quando la partita viene chiusa. 
+	 */
 	public void shutdown() {
         try {
             this.bw.append("\n");
@@ -102,20 +125,22 @@ public class SimpleDriver extends Controller {
 	
 	}
 
+	/**
+	 * Gestisce la marcia in maniera automatica 
+	 * 
+	 * @param sensors riferimento ai sensori di gioco
+	 */
 	private int getGear(SensorModel sensors) {
 		int gear = sensors.getGear();
 		double rpm = sensors.getRPM();
-
 		// Se la marcia è 0 (N) o -1 (R) restituisce semplicemente 1
 		if (gear < 1)
 			return 1;
-
 		// Se il valore di RPM dell'auto è maggiore di quello suggerito
 		// sale di marcia rispetto a quella attuale
 		if (gear < 6 && rpm >= gearUp[gear - 1])
 			return gear + 1;
 		else
-
 		// Se il valore di RPM dell'auto è inferiore a quello suggerito
 		// scala la marcia rispetto a quella attuale
 		if (gear > 1 && rpm <= gearDown[gear - 1])
@@ -124,72 +149,16 @@ public class SimpleDriver extends Controller {
 			return gear;
 	}
 
-	private float getSteer(SensorModel sensors) {
-		/** L'angolo di sterzata viene calcolato correggendo l'angolo effettivo della vettura
-		 * rispetto all'asse della pista [sensors.getAngle()] e regolando la posizione della vettura
-		 * rispetto al centro della pista [sensors.getTrackPos()*0,5].
-		 */
-		float targetAngle = (float) (sensors.getAngleToTrackAxis() - sensors.getTrackPosition() * 0.5);
-		// ad alta velocità ridurre il comando di sterzata per evitare di perdere il controllo
-		if (sensors.getSpeed() > steerSensitivityOffset)
-			return (float) (targetAngle
-					/ (steerLock * (sensors.getSpeed() - steerSensitivityOffset) * wheelSensitivityCoeff));
-		else
-			return (targetAngle) / steerLock;
-	}
-
-	private float getAccel(SensorModel sensors) {
-		// controlla se l'auto è fuori dalla carreggiata
-		if (sensors.getTrackPosition() > -1 && sensors.getTrackPosition() < 1) {
-			// lettura del sensore a +5 gradi rispetto all'asse dell'automobile
-			float rxSensor = (float) sensors.getTrackEdgeSensors()[10];
-			// lettura del sensore parallelo all'asse della vettura
-			float sensorsensor = (float) sensors.getTrackEdgeSensors()[9];
-			// lettura del sensore a -5 gradi rispetto all'asse dell'automobile
-			float sxSensor = (float) sensors.getTrackEdgeSensors()[8];
-
-			float targetSpeed;
-
-			// Se la pista è rettilinea e abbastanza lontana da una curva, quindi va alla massima velocità
-			if (sensorsensor > maxSpeedDist || (sensorsensor >= rxSensor && sensorsensor >= sxSensor))
-				targetSpeed = maxSpeed;
-			else {
-				// In prossimità di una curva a destra
-				if (rxSensor > sxSensor) {
-
-					// Calcolo dell'"angolo" di sterzata
-					float h = sensorsensor * sin5;
-					float b = rxSensor - sensorsensor * cos5;
-					float sinAngle = b * b / (h * h + b * b);
-
-					// Set della velocità in base alla curva
-					targetSpeed = maxSpeed * (sensorsensor * sinAngle / maxSpeedDist);
-				}
-				// In prossimità di una curva a sinistra
-				else {
-					// Calcolo dell'"angolo" di sterzata
-					float h = sensorsensor * sin5;
-					float b = sxSensor - sensorsensor * cos5;
-					float sinAngle = b * b / (h * h + b * b);
-
-					// eSet della velocità in base alla curva
-					targetSpeed = maxSpeed * (sensorsensor * sinAngle / maxSpeedDist);
-				}
-			}
-
-			/**
-			 * Il comando di accelerazione/frenata viene scalato in modo esponenziale rispetto
-			 * alla differenza tra velocità target e quella attuale
-			 */
-			return (float) (2 / (1 + Math.exp(sensors.getSpeed() - targetSpeed)) - 1);
-		} else
-			// Quando si esce dalla carreggiata restituisce un comando di accelerazione moderata
-			return (float) 0.3;
-	}
-
+	/**
+	 * Gestisce la creazione di un'azione in risposta alla lettura dei sensori.
+	 * 
+	 * - Se {@code training} è {@code true}, consente il controllo manuale tramite tastiera
+	 * - Se {@code training} è {@code false}, predice l'azione da eseguire usando NearestNeighbor
+	 * 
+	 * @param sensors riferimento ai sensori del gioco
+	 * @return azione da applicare
+	 */
 	public Action control(SensorModel sensors) {
-		//Controlla se l'auto è attualmente bloccata
-
 		if (!training){
 			vfN = new VectorFeatures(sensors);
 			Point p = new Point(vfN, nn);		
@@ -243,8 +212,16 @@ public class SimpleDriver extends Controller {
 		}
 	}
 
+	/**
+	 * Associa a ciascuna classe passata ({@code pClasse}) l'azione da effettuare 
+	 * 
+	 * @param pClasse classe dell'azione da effettuare
+	 * @param sensor riferimento ai sensori di gioco
+	 * @param currClutch valore della frizione corrente
+	 * 
+	 * @return l'azione da applicare
+	 */
 	public Action predictAction (int pClasse, SensorModel sensor, float currclutch){
-		//pClasse è la classe del punto attuale normalizzato prodotta dal metodo findNearesteNeighbor
 		int gear= getGear(sensor); 
 		float clutch= clutching(sensor, currclutch);
 
@@ -303,26 +280,27 @@ public class SimpleDriver extends Controller {
 				act.steering = 0;
 				break;
 		}
-
 		return act;
-
-		
 	}
 
-	/* Controller per la guida manuale con controlli wasdqer */
+	/**
+	 * Sulla base delL'ActionKey contenuto nel {@code vectorFeatures} (vf), associa una risposta 
+	 * La frizione e la marcia vengono comunque gestite automaticamente.
+	 * 
+	 * @param vf vettore delle features
+	 * @param sensor riferimento ai sensori di giocoà
+	 * @param currClutch valore attuale della frizione
+	 * 
+	 * @return azione da effettuare sulla base dell'ActionKey
+	 */
 	public 	Action ManualControl(VectorFeatures vf, SensorModel sensor, float currclutch){
-		//Costruisco l'azione 
-		//Frizione e marcia continuo a gestire in automatico
-		//In base alla classe dovrò generare comandi diversi per accelerazione, freno e sterzata
+		//Frizione e freno continuano ad essere gestiti in automatico
 		int gear= getGear(sensor); 
 		float clutch= clutching(sensor, currclutch);
 		int actionClass = vf.getActionKey();
-		
-		//Cosrtuisco l'azione da ritornare
 		Action azione = new Action();
 		azione.gear = gear;
 		azione.clutch = clutch;
-
 		switch(actionClass){
 			case 0:
 				//accelera
@@ -374,63 +352,35 @@ public class SimpleDriver extends Controller {
 				azione.steering = 0;
 				break;
 		}
-		//Costruisco l'azione e la ritorno 
 		return azione;
 	}
 
-	private float filterABS(SensorModel sensors, float brake) {
-		// Converte la velocità in m/s
-		float speed = (float) (sensors.getSpeed() / 3.6);
-
-		// Quando la velocità è inferiore alla velocità minima per l'abs non interviene in caso di frenata
-		if (speed < absMinSpeed)
-			return brake;
-
-		// Calcola la velocità delle ruote in m/s
-		float slip = 0.0f;
-		for (int i = 0; i < 4; i++) {
-			slip += sensors.getWheelSpinVelocity()[i] * wheelRadius[i];
-		}
-
-		// Lo slittamento è la differenza tra la velocità effettiva dell'auto e la velocità media delle ruote
-		slip = speed - slip / 4.0f;
-
-		// Quando lo slittamento è troppo elevato, si applica l'ABS
-		if (slip > absSlip) {
-			brake = brake - (slip - absSlip) / absRange;
-		}
-
-		// Controlla che il freno non sia negativo, altrimenti lo imposta a zero
-		if (brake < 0)
-			return 0;
-		else
-			return brake;
-	}
-
+	/**
+	 * Gestisce in maniera automatica la frizione
+	 * 
+	 * @param sensors riferimento ai sensori di gioco
+	 * @param clutch valore corrente della frizione
+	 * 
+	 * @return il valore della frizione da impostare 
+	 */
 	float clutching(SensorModel sensors, float clutch) {
-
 		float maxClutch = clutchMax;
-
 		// Controlla se la situazione attuale è l'inizio della gara
 		if (sensors.getCurrentLapTime() < clutchDeltaTime && getStage() == Stage.RACE
 				&& sensors.getDistanceRaced() < clutchDeltaRaced)
 			clutch = maxClutch;
-
 		// Regolare il valore attuale della frizione
 		if (clutch > 0) {
 			double delta = clutchDelta;
 			if (sensors.getGear() < 2) {
-
 				// Applicare un'uscita più forte della frizione quando la marcia è una e la corsa è appena iniziata.
 				delta /= 2;
 				maxClutch *= clutchMaxModifier;
 				if (sensors.getCurrentLapTime() < clutchMaxTime)
 					clutch = maxClutch;
 			}
-
 			// Controllare che la frizione non sia più grande dei valori massimi
 			clutch = Math.min(maxClutch, clutch);
-
 			// Se la frizione non è al massimo valore, diminuisce abbastanza rapidamente
 			if (clutch != maxClutch) {
 				clutch -= delta;
@@ -443,10 +393,13 @@ public class SimpleDriver extends Controller {
 		return clutch;
 	}
 
+	/**
+	 * Inizializza i 19 angoli dei sensori con valori tra -90 e +90 gradi.
+	 * 
+	 * @return array contente i valori degli angoli
+	 */
 	public float[] initAngles() {
-
 		float[] angles = new float[19];
-
 		/*
 		 * set angles as
 		 * {-90,-75,-60,-45,-30,-20,-15,-10,-5,0,5,10,15,20,30,45,60,75,90}
@@ -455,7 +408,6 @@ public class SimpleDriver extends Controller {
 			angles[i] = -90 + i * 15;
 			angles[18 - i] = 90 - i * 15;
 		}
-
 		for (int i = 5; i < 9; i++) {
 			angles[i] = -20 + (i - 5) * 5;
 			angles[18 - i] = 20 - (i - 5) * 5;
