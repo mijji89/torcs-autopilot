@@ -13,8 +13,8 @@ public class VectorFeatures {
     private Double[] features; 
     private int actionKey; 
 
-    private final Double[] minVf={-0.496,-0.982,0.0,0.155,0.0,-30.443,-14.357,0.226,-1.0,-1.0,-1.0,-1.0,-1.0,-3.701};
-	private final Double[] maxVf={0.851,180.176,1.0,5784.040,17306.600,236.944,8.522,0.392,200.0,11.017,11.354,28.767,200.0,5.268};
+    private final Double[] minVf={-(Math.PI),-0.982,0.0,0.167,0.0,-59.841,-14.181,0.225,-1.0,-1.0,-1.0,-1.0,-1.0,-4.336};
+	private final Double[] maxVf={+(Math.PI),240.387,1329.00,5784.10,11513.00,255.925,10.127,0.441,200.0,200.00,200.00,200.0,200.0,7.851};
 
     /**
      * Costruttore che costruisce il vectorFeatures con valori dei parametri normalizzati

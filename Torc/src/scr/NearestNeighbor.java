@@ -23,8 +23,7 @@ public class NearestNeighbor {
     public NearestNeighbor() {
         this.trainingData = new ArrayList<>();
         this.readPointsFromCSV("../src/normalizedDataset.csv");
-        this.kdtree = null;
-        this.classCounts = new int[15];
+        this.classCounts = new int[7];
     }
 
     /**
@@ -36,11 +35,8 @@ public class NearestNeighbor {
         try {
             BufferedReader bw = new BufferedReader(new FileReader(filename));
             String line;
+            bw.readLine();
             while ((line = bw.readLine()) != null) {
-                if (line.startsWith(flof)) {
-                    continue; // Skip header
-                }
-
                 this.trainingData.add(new Point(line));
                 System.out.println("Sto leggendo i punti.");
             }
@@ -48,8 +44,9 @@ public class NearestNeighbor {
         } catch (IOException ex) {
             System.err.println(ex);
         }
-        if (!trainingData.isEmpty()) {
-            this.kdtree = new KDTree(trainingData);
+        System.out.println("Totale punti letti: " + this.trainingData.size());
+        if (!this.trainingData.isEmpty()) {
+            this.kdtree = new KDTree(this.trainingData);
         } else {
             System.err.println("Il dataset è vuoto! KDTree non è stato creato.");
     }
@@ -66,11 +63,11 @@ public class NearestNeighbor {
     }
 
     public int classify(Point testPoint, int k){
-        List<Point> kNearestNeighbors= findNearestNeighbor(testPoint, k);
+        List<Point> knn = this.findNearestNeighbor(testPoint, k);
         for (int i=0; i< classCounts.length;i++){
             classCounts[i]=0;
         }
-        for (Point point : kNearestNeighbors) {
+        for (Point point : knn) {
             classCounts[point.classe]++;
             }
         int maxCount = -1;

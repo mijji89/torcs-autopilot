@@ -45,7 +45,7 @@ class KDTree {
 
     public List<Point> kNearestNeighbors(Point target, int k) {
         PriorityQueue<Point> pq = new PriorityQueue<>(k, Comparator.comparingDouble(target::distance).reversed());
-        kNearestNeighbors(root, target, k, 0, pq);
+        this.kNearestNeighbors(root, target, k, 0, pq);
         return new ArrayList<>(pq);
     }
 
@@ -53,7 +53,6 @@ class KDTree {
         if (node == null) {
             return;
         }
-
         double distance = target.distance(node.point);
         if (pq.size() < k) {
             pq.offer(node.point);
@@ -61,7 +60,6 @@ class KDTree {
             pq.poll();
             pq.offer(node.point);
         }
-
         int axis = depth % dimensions;
         KDNode nearNode = (target.features[axis] < node.point.features[axis]) ? node.left : node.right;
         KDNode farNode = (nearNode == node.left) ? node.right : node.left;
