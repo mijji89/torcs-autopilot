@@ -51,7 +51,7 @@ public class NormalizeDataset {
         else{
             try{
 				this.bw = new BufferedWriter(new FileWriter(datasetNormalized));
-				this.bw.write("AngleToTrackAxis;Damage;Speed;TrackEdgeSensors0;TrackEdgeSensor-90;TrackEdgeSensor+90;TarckEdgeSensor-50;TrackEdgeSensor+30;TrackPosition;action");
+				this.bw.write("AngleToTrackAxis;Speed;TrackEdgeSensors0;TrackEdgeSensor-90;TrackEdgeSensor+90;TarckEdgeSensor-50;TrackEdgeSensor+30;TrackPosition;action");
 				this.bw.write("\n");
 			}catch(IOException ex){
 				System.err.println();

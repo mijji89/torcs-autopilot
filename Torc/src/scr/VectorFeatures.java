@@ -40,7 +40,11 @@ public class VectorFeatures {
         this.features[13]=sensors.getTrackPosition();
         //normalizzazione
         this.features = this.normalizeMinMax(minVf, maxVf); 
-
+        System.out.println("Feature normalizzate (test):");
+        for (int i = 0; i < this.features.length; i++) {
+            System.out.print(this.features[i] + " ");
+        }
+        System.out.println(); // nuova riga
     }
 
     /**

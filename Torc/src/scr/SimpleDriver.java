@@ -21,7 +21,7 @@ import javax.swing.SwingUtilities;
  */
 public class SimpleDriver extends Controller {
 	//Flag booleana che mi permette di leggere o meno i valori di tastiera
-	private boolean training = true;   
+	private boolean training = false;   
 	private char pressed;  
 	
 	final int[] gearUp = { 5000, 6000, 6000, 6500, 7000, 0 };
@@ -58,8 +58,9 @@ public class SimpleDriver extends Controller {
 	VectorFeatures vfN;
 	NearestNeighbor nn = new NearestNeighbor();
 	private float clutch = 0;
+	int k = 3;
 
-	File file = new File("datasetMic1Lap.csv");
+	File file = new File("datasetLap3.csv");
 
 	/**
 	 * Costruttore che, se in modalità addestramento, permette di: 
@@ -161,7 +162,7 @@ public class SimpleDriver extends Controller {
 	public Action control(SensorModel sensors) {
 		if (!training){
 			vfN = new VectorFeatures(sensors);
-			Point p = new Point(vfN, nn);		
+			Point p = new Point(vfN,nn,k);		
 			Action act = new Action();
 			act = predictAction(p.getClasse(), sensors, clutch);
 			return act;

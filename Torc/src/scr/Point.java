@@ -4,8 +4,8 @@ package scr;
  * Classe che permette di memorizzare solo i parametri di interesse con la classe d'azione 
  */
 public class Point {
-    private Double[] features; 
-    private int classe;
+    Double[] features; 
+    int classe;
 
 	/**
 	 * Costruttore utilizzato per associare una classe d'azione sulla base dei valori dei parametri in ingresso 
@@ -13,9 +13,9 @@ public class Point {
 	 * @param vfN istanza di VectorFeatures con i parametri normalizzati 
 	 * @param nn istanza di NearestNeighbor che permette di trovare il punto più simile
 	 */
-	public Point(VectorFeatures vfN, NearestNeighbor nn){
+	public Point(VectorFeatures vfN, NearestNeighbor nn, int k){
 		this.features = new Double[] {vfN.getFeatures()[0], vfN.getFeatures()[2],vfN.getFeatures()[5], vfN.getFeatures()[8], vfN.getFeatures()[9], vfN.getFeatures()[10], vfN.getFeatures()[11], vfN.getFeatures()[12], vfN.getFeatures()[13]};
-		this.classe = nn.findNearestNeighbor(this);
+		this.classe = nn.classify(this,k);
 	}
 
     /**
@@ -39,8 +39,8 @@ public class Point {
 	 * @param other punto rispetto al quale calcolare la distanza
 	 * @return  distanza euclidea calcolata
 	.*/
-    public Double distance(Point other) {
-		Double sum = 0.0;
+    public double distance(Point other) {
+		double sum = 0.0;
 		for(int i = 0; i<this.features.length; i++){
 			sum += Math.pow(this.features[i] - other.features[i], 2);
 		}

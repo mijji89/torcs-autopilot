@@ -15,13 +15,16 @@ import java.util.List;
 public class NearestNeighbor {
     private List<Point> trainingData;
     private String flof = "AngleToTrackAxis;Damage;Speed;TrackEdgeSensors0;TrackEdgeSensor-90;TrackEdgeSensor+90;TarckEdgeSensor-50;TrackEdgeSensor+30;TrackPosition;action";
-
+    private KDTree kdtree;
+    private int[] classCounts;
     /**
      * Costruttore che legge i dati dal file di training normalizzato
      */
     public NearestNeighbor() {
         this.trainingData = new ArrayList<>();
         this.readPointsFromCSV("../src/normalizedDataset.csv");
+        this.kdtree = null;
+        this.classCounts = new int[15];
     }
 
     /**
@@ -45,6 +48,11 @@ public class NearestNeighbor {
         } catch (IOException ex) {
             System.err.println(ex);
         }
+        if (!trainingData.isEmpty()) {
+            this.kdtree = new KDTree(trainingData);
+        } else {
+            System.err.println("Il dataset è vuoto! KDTree non è stato creato.");
+    }
     }
     
     /**
@@ -53,24 +61,28 @@ public class NearestNeighbor {
      * @param testPoint punto di cui si deve individuare il più "simile"
      * @return la classe del punto più vicino nel training set, o -1 se il training set è vuoto
      */
-    public int findNearestNeighbor(Point testPoint) {
-        if (this.trainingData.isEmpty()) {
-            System.out.println("training set vuoto");
-            return -1; 
-        }
-        Point nearestNeighbor = this.trainingData.get(0); 
-        double minDistance = testPoint.distance(nearestNeighbor); 
-
-        for (Point point : this.trainingData) {
-            double distance = testPoint.distance(point);
-            if (distance < minDistance) {
-                minDistance = distance;
-                nearestNeighbor = point;
-            }
-        }
-        return nearestNeighbor.getClasse(); 
+    public List<Point> findNearestNeighbor(Point testPoint, int k) {
+        return kdtree.kNearestNeighbors(testPoint, k);
     }
-    
+
+    public int classify(Point testPoint, int k){
+        List<Point> kNearestNeighbors= findNearestNeighbor(testPoint, k);
+        for (int i=0; i< classCounts.length;i++){
+            classCounts[i]=0;
+        }
+        for (Point point : kNearestNeighbors) {
+            classCounts[point.classe]++;
+            }
+        int maxCount = -1;
+        int predictedClass = -1;
+        for (int i = 0; i < classCounts.length; i++) {
+            if (classCounts[i] > maxCount) {
+                maxCount = classCounts[i];
+                predictedClass = i;
+            } 
+    }
+        return predictedClass;
+    }
     /**
      * Funzione che resituisce la lista di Points che rappresenta i dati di training normalizzati 
      * 
