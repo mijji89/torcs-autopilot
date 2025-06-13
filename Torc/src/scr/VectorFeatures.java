@@ -143,7 +143,7 @@ public class VectorFeatures {
 	public VectorFeatures(String lineCSV){
 		String[] parts = lineCSV.split(";");
 		int n = parts.length;
-		this.features = new Double[14];
+		this.features = new double[n-1];
 		for(int i=0; i<n-1; i++){
 			this.features[i] = Double.parseDouble(parts[i].trim());
 		}
@@ -163,8 +163,8 @@ public class VectorFeatures {
      */
     public Double[] normalizeMinMax(Double[] min, Double[] max){
         Double[] normalized= new Double[14];
-        for(int i=0; i< features.length; i++ ){
-            normalized[i]= (features[i]-min[i])/(max[i]-min[i]);
+        for(int i=0; i< this.features.length; i++ ){
+            normalized[i]= (this.features[i]-min[i])/(max[i]-min[i]);
         }
         return normalized;
     }
