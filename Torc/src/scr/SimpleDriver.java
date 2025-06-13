@@ -59,7 +59,7 @@ public class SimpleDriver extends Controller {
 	NearestNeighbor nn = new NearestNeighbor();
 	private float clutch = 0;
 
-	File file = new File("datasetMic1Lap.csv");
+	File file = new File("dataset3Lap.csv");
 
 	/**
 	 * Costruttore che, se in modalità addestramento, permette di: 
