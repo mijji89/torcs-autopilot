@@ -4,7 +4,7 @@ package scr;
  * La classe rappresenta il vettore di features estratto dai sensori di gioco, utilizzato per il training e la predizione. 
  * 
  * Contiene:
- * - {@code features[]}: un vettore di Double contenente tutti i parametri letti "attualmente" dai sensori
+ * - {@code features[]}: un vettore di Double contenente tutti i parametri letti attualmente dai sensori
  * - {@code actionKey}: un intero che rappresenta le diverse azioni possibili
  * - {@code minVf[]}: un vettore di Double contenente tutti i minimi valori per ciascun parametro
  * - {@code maxVf[]}: un vettore di Double contenente tutti i massimi valori per ciascun parametro
@@ -13,11 +13,11 @@ public class VectorFeatures {
     private Double[] features; 
     private int actionKey; 
 
-    private final Double[] minVf={-(Math.PI),-0.982,0.0,0.0,0.0,0.0,0.0,0.225,-1.0,-1.0,-1.0,-1.0,-1.0,-1.00};
-	private final Double[] maxVf={+(Math.PI),240.387,1400.0,5784.10,11513.00,300.0,10.127,0.441,200.0,200.00,200.00,200.0,200.0,1.00};
+    private final Double[] minVf={-(Math.PI),-0.982,0.0,0.0,0.0,-44.973,-10.6,0.225,-1.0,-1.0,-1.0,-1.0,-1.0,-4.00};
+	private final Double[] maxVf={+(Math.PI),292.0,0.0,5784.10,11513.00,160.0,6.9,0.455,200.0,200.00,200.00,200.0,200.0,5.0};
 
     /**
-     * Costruttore che costruisce il vectorFeatures con valori dei parametri normalizzati
+     * Costruisce un oggetto VectorFeatures normalizzando i valori dei parametri acquisiti dai sensori
      * 
      * @param sensors riferimento ai sensori di gioco
      */
@@ -84,7 +84,7 @@ public class VectorFeatures {
     }
     
     /**
-     * Ritorna la classe d'azione 
+     * Restituisce la classe d'azione associata a queste features
      * 
      * @return la classe d'azione
      */
@@ -95,12 +95,12 @@ public class VectorFeatures {
     /**
      * Imposta un sottoinsieme delle features rilevanti per la guida: 
      * 
-     * @param angleAxis angolo tra la direazione dell'auto e l'asse tangente al tracciato
+     * @param angleAxis angolo tra la direzione dell'auto e l'asse tangente al tracciato
      * @param  speed velocità
      * @param angleZero distanza tra il sensore in posizione 0° ed il bordo della pista
-     * @param angleMinNinenty distanza tra il sensore in posizione -90° ed il bordo della pista
+     * @param angleMinNinety distanza tra il sensore in posizione -90° ed il bordo della pista
      * @param angleMaxNinety distanza tra il sensore in posizione +90° ed il bordo della pista
-     * @param angkeMinFifty distanza tra il sensore in posizione -50° ed il bordo della pista
+     * @param angleMinFifty distanza tra il sensore in posizione -50° ed il bordo della pista
      * @param angleMaxThirty distanza tra il sensore in posizione +30° ed il bordo della pista
      * @param trackPos distanza tra l'auto e l'asse della pista
      * 
@@ -128,7 +128,7 @@ public class VectorFeatures {
     /**
      * Permette di trasformare in stringa l'oggetto
      * 
-     * @return la stringa rappresentate l'oggetto
+     * @return la stringa rappresentante l'oggetto
      */
     @Override
     public String toString(){
@@ -143,7 +143,7 @@ public class VectorFeatures {
 	public VectorFeatures(String lineCSV){
 		String[] parts = lineCSV.split(";");
 		int n = parts.length;
-		this.features = new double[n-1];
+		this.features = new Double[n-1];
 		for(int i=0; i<n-1; i++){
 			this.features[i] = Double.parseDouble(parts[i].trim());
 		}
@@ -153,7 +153,7 @@ public class VectorFeatures {
 	  
     
     /**
-     * Normalizza i valori del veactor features sfruttando due vettori: 
+     * Normalizza i valori del vector features sfruttando due vettori: 
      * uno contenente i minimi per ogni feature (min[]) e uno contenente i massimi per ogni feature (max[])
      *
      * @param min[] vettore contenente i valori minimi per ogni parametro

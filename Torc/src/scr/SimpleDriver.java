@@ -7,44 +7,39 @@ import java.io.IOException;
 import javax.swing.SwingUtilities;
 
 /**
- * La classe implementa la guida sia manuale che autonoma, gestendo in maniera automatica i freni e le marce.
+ * Classe principale per il controllo dell'auto. Gestisce sia la guida automatica
+ * (tramite classificatore K-NN) che la modalità di training manuale (controllo da tastiera)
  * 
+ * - In modalità automatica, predice le azioni in base ai sensori e ai dati acquisiti in fase di training
+ * - In modalità training, permette all'utente di registrare manualmente i dati di guida per creare il dataset
  * 
- * - {@code training}: flag booleana che permette di abilitare o meno la modalità di training
- * - {@code pressed}: mantiene il carattere corrispondente al tasto premuto (w-a-s-d-q-e-r)
- * - {@code gearUp, gearDown}: array di soglie per il cambio marci automatico
- * - {@code bw}: BufferedWriter che consente di scrivere sul file CSV
- * - {@code vfN}: vettore delle features normalizzate
- * - {@code nn}: classificatore NearestNeighbor utilizzata per predirre l'azione da effettuare
- * - {@code clutch}:valore corrente della frizione (inizialmente a 0)
- * - {@code file}: riferimento al file CSV per il salvataggio dei dati di training
  */
 public class SimpleDriver extends Controller {
-	//Flag booleana che mi permette di leggere o meno i valori di tastiera
+	/**Flag booleana che mi permette di leggere o meno i valori di tastiera*/
 	private boolean training = false;   
 	private char pressed;  
 	
 	final int[] gearUp = { 5000, 6000, 6000, 6500, 7000, 0 };
 	final int[] gearDown = { 0, 2500, 3000, 3000, 3500, 3500 };
 
-	/* Costanti di accelerazione e di frenata */
+	/** Costanti di accelerazione e di frenata */
 	final float maxSpeedDist = 70;
 	final float maxSpeed = 150;
 	final float sin5 = (float) 0.08716;
 	final float cos5 = (float) 0.99619;
 
-	/* Costanti di sterzata */
+	/** Costanti di sterzata */
 	final float steerLock = (float) 0.785398;
 	final float steerSensitivityOffset = (float) 80.0;
 	final float wheelSensitivityCoeff = 1;
 
-	/* Costanti del filtro ABS */
+	/** Costanti del filtro ABS */
 	final float wheelRadius[] = { (float) 0.3179, (float) 0.3179, (float) 0.3276, (float) 0.3276 };
 	final float absSlip = (float) 2.0;
 	final float absRange = (float) 3.0;
 	final float absMinSpeed = (float) 3.0;
 
-	/* Costanti da stringere */
+	/** Costanti da stringere */
 	final float clutchMax = (float) 0.5;
 	final float clutchDelta = (float) 0.05;
 	final float clutchRange = (float) 0.82;
@@ -58,9 +53,9 @@ public class SimpleDriver extends Controller {
 	VectorFeatures vfN;
 	NearestNeighbor nn = new NearestNeighbor();
 	private float clutch = 0;
-	int k = 3;
+	int k = 5;
 
-	File file = new File("datasetLap3.csv");
+	File file = new File("datasetLap.csv");
 
 	/**
 	 * Costruttore che, se in modalità addestramento, permette di: 
@@ -199,7 +194,7 @@ public class SimpleDriver extends Controller {
 					vf = new VectorFeatures(sensors,6 ); 
 					break;
 				default:
-					vf = new VectorFeatures(sensors, -1);
+					vf = new VectorFeatures(sensors, 7);
 					break; 	
 			}
 			try{
@@ -239,15 +234,15 @@ public class SimpleDriver extends Controller {
 				break;
 			case 1:
 				//sinistra
-				act.accelerate = 0.7;
+				act.accelerate = 0.3;
 				act.brake = 0.0;
-				act.steering = 0.7;
+				act.steering = 0.5;
 				break;
 			case 2:
 				//destra
-				act.accelerate = 0.7;
+				act.accelerate = 0.3;
 				act.brake = 0.0;
-				act.steering = -0.7;
+				act.steering = -0.5;
 				break;
 			case 3:
 				//frena
@@ -264,19 +259,19 @@ public class SimpleDriver extends Controller {
 				break;
 			case 5:
 				//avanti sinistra
-				act.accelerate = 0.8; 
+				act.accelerate = 0.2; 
 				act.brake = 0.0;
-				act.steering = 0.4;
+				act.steering = 0.3;
 				break;
 			case 6:
 				//avanti destra
-				act.accelerate = 0.8; 
+				act.accelerate = 0.2; 
 				act.brake = 0.0;
-				act.steering = -0.4;
+				act.steering = -0.3;
 				break;
-			case -1:
+			case 7:
 				//default
-				act.accelerate = 0.0;
+				act.accelerate = 0.2;
 				act.brake = 0.0;
 				act.steering = 0;
 				break;
@@ -289,7 +284,7 @@ public class SimpleDriver extends Controller {
 	 * La frizione e la marcia vengono comunque gestite automaticamente.
 	 * 
 	 * @param vf vettore delle features
-	 * @param sensor riferimento ai sensori di giocoà
+	 * @param sensor riferimento ai sensori di gioco
 	 * @param currClutch valore attuale della frizione
 	 * 
 	 * @return azione da effettuare sulla base dell'ActionKey
@@ -313,13 +308,13 @@ public class SimpleDriver extends Controller {
 				//sinistra
 				azione.accelerate = 0.7;
 				azione.brake = 0.0;
-				azione.steering = 0.7;
+				azione.steering = 0.5;
 				break;
 			case 2:
 				//destra
 				azione.accelerate = 0.7;
 				azione.brake = 0.0;
-				azione.steering = -0.7;
+				azione.steering = -0.5;
 				break;
 			case 3:
 				//frena
@@ -336,19 +331,19 @@ public class SimpleDriver extends Controller {
 				break;
 			case 5:
 				//avanti sinistra
-				azione.accelerate = 0.8; 
+				azione.accelerate = 0.6; 
 				azione.brake = 0.0;
-				azione.steering = 0.4;
+				azione.steering = 0.3;
 				break;
 			case 6:
 				//avanti destra
-				azione.accelerate = 0.8; 
+				azione.accelerate = 0.6; 
 				azione.brake = 0.0;
-				azione.steering = -0.4;
+				azione.steering = -0.3;
 				break;
-			case -1:
+			case 7:
 				//default
-				azione.accelerate = 0.0;
+				azione.accelerate = 0.2;
 				azione.brake = 0.0;
 				azione.steering = 0;
 				break;
